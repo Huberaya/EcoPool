@@ -1,0 +1,6 @@
+{
+  "name": "EcoPool - Centrale d'Achat B2B Responsable",
+  "description": "Centrale d'achat collaborative B2B spécialisée dans les matières premières, composants et emballages responsables permettant aux PME d'atteindre les MOQ industrielles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -17,7 +17,8 @@ import {
 import { CampaignStatus, SupplierStatus, CertificationStatus, OrderReservation } from '../types';
 import { OfficialDocumentModal } from './OfficialDocumentModal';
 import { ScenarioValidationModal } from './ScenarioValidationModal';
-import { FlaskConical, BadgeCheck } from 'lucide-react';
+import { ConcurrencyWorkbenchModal } from './ConcurrencyWorkbenchModal';
+import { FlaskConical, BadgeCheck, Zap } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { 

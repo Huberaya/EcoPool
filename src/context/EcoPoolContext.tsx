@@ -16,6 +16,11 @@ import {
   SyncStatus
 } from '../types';
 import { 
+  sseClient, 
+  SSEConnectionStatus, 
+  SSEMessageEvent 
+} from '../services/sseClient';
+import { 
   apiFetchState, 
   apiJoinCampaign, 
   apiSignContract, 
@@ -61,6 +66,11 @@ interface EcoPoolContextType {
   refreshSync: () => Promise<void>;
   restoreFullBackup: (data: any) => Promise<boolean>;
   resetPlatformData: () => Promise<boolean>;
+  
+  // Phase 1.3: Real-Time Server-Sent Events (SSE)
+  sseStatus: SSEConnectionStatus;
+  lastRealtimeEvent: SSEMessageEvent | null;
+  reconnectSSE: () => void;
   
   // Actions
   joinCampaign: (campaignId: string, quantity: number, notes?: string) => { success: boolean; orderId?: string; message: string };
@@ -151,6 +161,10 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('syncing');
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
 
+  // Phase 1.3 Real-Time SSE Stream State
+  const [sseStatus, setSseStatus] = useState<SSEConnectionStatus>(sseClient.getStatus());
+  const [lastRealtimeEvent, setLastRealtimeEvent] = useState<SSEMessageEvent | null>(null);
+
   // Sync with Backend Database API on mount
   const refreshSync = async () => {
     setSyncStatus('syncing');
@@ -177,6 +191,59 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   useEffect(() => {
     refreshSync();
+
+    // Abonnement aux flux Server-Sent Events (SSE)
+    const unsubStatus = sseClient.onStatusChange(setSseStatus);
+
+    const unsubOrder = sseClient.subscribe('ORDER_COMMITTED', (_data) => {
+      refreshSync();
+    });
+
+    const unsubProgress = sseClient.subscribe('CAMPAIGN_PROGRESS', (data) => {
+      if (data && data.campaignId) {
+        setCampaigns(prev => prev.map(c => {
+          if (c.id === data.campaignId) {
+            return {
+              ...c,
+              reservedVolume: data.reservedVolume,
+              currentUnitPrice: data.currentUnitPrice,
+              status: data.status,
+              participantsCount: data.participantsCount
+            };
+          }
+          return c;
+        }));
+      }
+    });
+
+    const unsubTier = sseClient.subscribe('TIER_UNLOCKED', (data) => {
+      const notif: SystemNotification = {
+        id: `sse-tier-${Date.now()}`,
+        title: '🎉 Palier Franchi en Direct ! (SSE)',
+        message: `Campagne "${data.campaignTitle}" : seuil de ${data.unlockedVolume?.toLocaleString()} unités atteint ! Nouveau prix : ${data.newUnitPrice?.toFixed(2)} € (${data.discountPercentage}% remise).`,
+        type: 'info',
+        timestamp: 'À l’instant',
+        read: false
+      };
+      setNotifications(prev => [notif, ...prev]);
+    });
+
+    const unsubStress = sseClient.subscribe('STRESS_TEST_COMPLETED', (_data) => {
+      refreshSync();
+    });
+
+    const unsubAny = sseClient.subscribe('*', (evt) => {
+      setLastRealtimeEvent(evt);
+    });
+
+    return () => {
+      unsubStatus();
+      unsubOrder();
+      unsubProgress();
+      unsubTier();
+      unsubStress();
+      unsubAny();
+    };
   }, []);
 
   const restoreFullBackup = async (data: any): Promise<boolean> => {
@@ -729,6 +796,9 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
         refreshSync,
         restoreFullBackup,
         resetPlatformData,
+        sseStatus,
+        lastRealtimeEvent,
+        reconnectSSE: () => sseClient.connect(),
         joinCampaign,
         createCampaign,
         updateCampaignStatus,

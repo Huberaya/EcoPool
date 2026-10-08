@@ -17,6 +17,7 @@ import { AIAssistantModal } from './components/AIAssistantModal';
 import { AuditReportModal } from './components/AuditReportModal';
 import { PersistenceHubModal } from './components/PersistenceHubModal';
 import { ScenarioValidationModal } from './components/ScenarioValidationModal';
+import { ConcurrencyWorkbenchModal } from './components/ConcurrencyWorkbenchModal';
 import { Campaign, ICPSector } from './types';
 import { 
   Sparkles, 
@@ -43,6 +44,7 @@ function EcoPoolAppContent() {
   const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
   const [isPersistenceModalOpen, setIsPersistenceModalOpen] = useState<boolean>(false);
   const [isValidationModalOpen, setIsValidationModalOpen] = useState<boolean>(false);
+  const [isConcurrencyModalOpen, setIsConcurrencyModalOpen] = useState<boolean>(false);
 
   // Filters for Campaigns
   const [filterSector, setFilterSector] = useState<string>('all');
@@ -76,6 +78,7 @@ function EcoPoolAppContent() {
         onOpenAudit={() => setIsAuditModalOpen(true)}
         onOpenPersistence={() => setIsPersistenceModalOpen(true)}
         onOpenValidation={() => setIsValidationModalOpen(true)}
+        onOpenConcurrency={() => setIsConcurrencyModalOpen(true)}
       />
 
       {/* Main View Container */}
@@ -317,6 +320,12 @@ function EcoPoolAppContent() {
         onClose={() => setIsValidationModalOpen(false)}
       />
 
+      {/* Phase 1: Concurrency, Atomicity & Real-Time SSE Workbench */}
+      <ConcurrencyWorkbenchModal
+        isOpen={isConcurrencyModalOpen}
+        onClose={() => setIsConcurrencyModalOpen(false)}
+      />
+
       {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 py-8 px-4 text-xs text-slate-400 mt-16">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -331,6 +340,13 @@ function EcoPoolAppContent() {
           </div>
 
           <div className="flex flex-wrap items-center gap-6 text-slate-400">
+            <button 
+              onClick={() => setIsConcurrencyModalOpen(true)}
+              className="text-amber-400 hover:text-amber-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              Concurrence & SSE (Phase 1)
+            </button>
             <button 
               onClick={() => setIsValidationModalOpen(true)}
               className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"

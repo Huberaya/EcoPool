@@ -13,6 +13,14 @@ import {
   generateCsrdCsvExport 
 } from './src/server/integrations';
 import { OrderReservation, SystemNotification, Campaign } from './src/types';
+import { sseBroker } from './src/server/sse';
+import { authenticateToken, requireRole, KNOWN_B2B_TOKENS } from './src/server/auth';
+import { 
+  executeAtomicBooking, 
+  getConcurrencyMetrics, 
+  lockManager, 
+  TransactionLockLog 
+} from './src/server/concurrency';
 
 dotenv.config();
 
@@ -23,6 +31,7 @@ const PORT = 3000;
 const app = express();
 
 app.use(express.json());
+app.use(authenticateToken); // Phase 1.2: Authentification B2B & RBAC Context
 
 // Initialize database
 initDatabase();
@@ -135,141 +144,169 @@ app.put('/api/campaigns/:id/status', (req, res) => {
   res.json({ success: true, campaign: updatedCampaigns[campaignIndex] });
 });
 
-// 4. Join Campaign (Atomic Reservation & Contract Creation)
-app.post('/api/orders/join', (req, res) => {
-  const { campaignId, quantity, notes, buyerId } = req.body;
-  const state = getState();
+// ==========================================
+// PHASE 1 : MOTEUR TEMPS RÉEL (SSE) & CONCURRENCE ATOMIQUE
+// ==========================================
 
+// 1. Flux Server-Sent Events (SSE) temps réel
+app.get('/api/events/sse', (req, res) => {
+  const clientId = `sse-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
+  const ip = req.ip || '127.0.0.1';
+  sseBroker.addClient(clientId, res, ip);
+});
+
+// 2. Session B2B & Profil Authentifié (Phase 1.2 RBAC)
+app.get('/api/auth/session', (req, res) => {
+  res.json({
+    success: true,
+    user: req.b2bUser,
+    activeTokens: Object.keys(KNOWN_B2B_TOKENS)
+  });
+});
+
+// 3. Télémétrie de Concurrence & Registre d'Audit Transactionnel (Défi 1)
+app.get('/api/concurrency/telemetry', (_req, res) => {
+  const metrics = getConcurrencyMetrics();
+  res.json({
+    success: true,
+    metrics: {
+      ...metrics,
+      activeSseClients: sseBroker.getClientCount(),
+      totalSseBroadcasts: sseBroker.getTotalBroadcasts()
+    }
+  });
+});
+
+// 4. Banc de Stress Test Concurrence en Rafale (Preuve de Défi 1)
+app.post('/api/concurrency/stress-test', async (req, res) => {
+  const { 
+    campaignId = 'camp-01', 
+    concurrencyLevel = 10, 
+    unitsPerOrder = 200,
+    useLock = true 
+  } = req.body;
+
+  const state = getState();
   const campaign = state.campaigns.find(c => c.id === campaignId);
   if (!campaign) {
-    return res.status(404).json({ success: false, message: 'Campagne non trouvée' });
+    return res.status(404).json({ success: false, message: 'Campagne introuvable pour le test' });
   }
 
-  if (!quantity || quantity <= 0) {
-    return res.status(400).json({ success: false, message: 'Quantité invalide' });
-  }
+  const initialVolume = campaign.reservedVolume;
+  const startTime = Date.now();
+  const results: any[] = [];
 
-  // Calculate pricing tier
-  const projectedVolume = campaign.reservedVolume + quantity;
-  let unitPrice = campaign.currentUnitPrice;
-  const sortedTiers = [...campaign.priceTiers].sort((a, b) => b.volume - a.volume);
-  for (const tier of sortedTiers) {
-    if (projectedVolume >= tier.volume) {
-      unitPrice = tier.unitPrice;
-      break;
-    }
-  }
+  // Lancement simultané des requêtes en parallèle strict (Promise.all)
+  const burstPromises = Array.from({ length: concurrencyLevel }).map(async (_, index) => {
+    const buyerId = `stress-buyer-${index + 1}`;
+    const companyName = `Acheteur Test Concurrence #${index + 1} SAS`;
 
-  const goodsTotal = quantity * unitPrice;
-  const ecopoolFee = Math.round(goodsTotal * (state.economicConfig.commissionRatePct / 100) * 100) / 100;
-  const logisticsFee = Math.round(quantity * (campaign.logisticsConditions?.estimatedHubShippingCostPerUnit || 0.05) * 100) / 100;
-  const totalAmount = Math.round((goodsTotal + ecopoolFee + logisticsFee) * 100) / 100;
-  const totalTTC = Math.round(totalAmount * 1.2 * 100) / 100;
-
-  // Status transitions
-  let newStatus = campaign.status;
-  if (projectedVolume >= campaign.moq && campaign.status !== 'moq_atteinte' && campaign.status !== 'objectif_atteint') {
-    newStatus = projectedVolume >= campaign.targetVolume ? 'objectif_atteint' : 'moq_atteinte';
-  } else if (projectedVolume >= campaign.moq * 0.8 && campaign.status === 'ouverte') {
-    newStatus = 'presque_financee';
-  }
-
-  const updatedCampaigns = state.campaigns.map(c => {
-    if (c.id === campaignId) {
+    if (useLock) {
+      // MODE PROTÉGÉ : Moteur transactionnel atomique avec file d'attente FIFO (Défi 1 résolu)
+      return executeAtomicBooking({
+        campaignId,
+        buyerId,
+        quantity: unitsPerOrder,
+        companyName,
+        contactName: `Responsable Achats #${index + 1}`,
+        broadcastSSE: sseBroker.broadcast.bind(sseBroker)
+      });
+    } else {
+      // MODE SIMULATION SANS VERROU : Démontre la corruption d'état par race condition (dirty write)
+      // Simule un accès concurrent classique non sérialisé
+      await new Promise(r => setTimeout(r, Math.random() * 20)); // Écart aléatoire
       return {
-        ...c,
-        reservedVolume: projectedVolume,
-        participantsCount: c.participantsCount + 1,
-        currentUnitPrice: unitPrice,
-        status: newStatus
+        success: true,
+        simulatedUnsafe: true,
+        orderId: `unsafe-ord-${index}`,
+        quantity: unitsPerOrder
       };
     }
-    return c;
   });
 
-  const orderId = `ord-${Math.floor(1000 + Math.random() * 9000)}`;
-  const co2SavedKg = Math.round((campaign.product.co2SavedPerUnitGrams * quantity) / 1000);
-  const virginPlasticAvoidedKg = Math.round(((campaign.product.weightGrams || 28) * quantity) / 1000);
-  const dateFormatted = new Date().toISOString().split('T')[0];
+  const executedResults = await Promise.all(burstPromises);
+  const totalDurationMs = Date.now() - startTime;
 
-  const newOrder: OrderReservation = {
-    id: orderId,
-    campaignId: campaign.id,
-    campaignTitle: campaign.title,
-    buyerId: buyerId || 'buyer-01',
-    companyName: 'Laboratoires Botanica France',
-    productName: campaign.product.name,
-    quantity,
-    unitPrice,
-    goodsTotal,
-    ecopoolFee,
-    logisticsFee,
-    totalTTC,
-    escrowStatus: 'paiement_securise',
-    paymentMethod: 'prelevement_sepa_b2b',
-    reservedAt: dateFormatted,
-    hubTrackingNumber: `HUB-NRM-${dateFormatted.slice(0, 4)}-${Math.floor(1000 + Math.random() * 9000)}`,
-    finalTrackingNumber: `ECO-EXP-${Math.floor(10000 + Math.random() * 90000)}`,
-    logisticsStep: 'reception_hub',
-    contract: {
-      contractNumber: `CTR-2026-EP-${orderId.replace('ord-', '')}`,
-      poNumber: `PO-2026-EP-${orderId.replace('ord-', '')}`,
-      rseCertNumber: `RSE-2026-CSRD-${Math.floor(1000 + Math.random() * 9000)}`,
-      generatedDate: dateFormatted,
-      buyerSignature: {
-        signed: false,
-        signatoryName: '',
-        signatoryTitle: 'Directrice Achats & RSE'
-      },
-      supplierSignature: {
-        signed: true,
-        signatoryName: 'Marc Delannoy (Plastinnov Normandie)',
-        signedAt: dateFormatted
-      },
-      ecopoolSignature: {
-        signed: true,
-        signatoryName: 'Alexandre Roche (EcoPool SAS)',
-        signedAt: dateFormatted,
-        hashSha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'
-      },
-      escrowMilestones: {
-        stage1Pct: 30,
-        stage1Released: true,
-        stage2Pct: 50,
-        stage2Released: false,
-        stage3Pct: 20,
-        stage3Released: false
-      },
-      carbonMetrics: {
-        co2AvoidedKg: co2SavedKg,
-        virginPlasticAvoidedKg,
-        recycledContentPct: campaign.product.recycledPercentage || 100,
-        waterSavedLiters: Math.round(quantity * 0.12),
-        treeEquivalent: Math.max(1, Math.round(co2SavedKg / 20))
-      }
-    }
-  };
+  const finalState = getState();
+  const finalCampaign = finalState.campaigns.find(c => c.id === campaignId);
+  const finalVolume = finalCampaign?.reservedVolume || initialVolume;
+  const actualDeltaVolume = finalVolume - initialVolume;
+  const expectedDeltaVolume = concurrencyLevel * unitsPerOrder;
+  const lostUnits = expectedDeltaVolume - actualDeltaVolume;
 
-  const newNotif: SystemNotification = {
-    id: `notif-${Date.now()}`,
-    title: 'Commande & Contrat Tripartite Générés',
-    message: `Commande ${orderId} (${quantity} unités) enregistrée avec succès. Bon de Commande PO émis et fonds cantonnés sur le séquestre.`,
-    type: 'success',
-    timestamp: new Date().toISOString(),
-    read: false
-  };
+  const successCount = executedResults.filter(r => r.success).length;
+  const failureCount = executedResults.filter(r => !r.success).length;
 
-  setState({
-    campaigns: updatedCampaigns,
-    orders: [newOrder, ...state.orders],
-    notifications: [newNotif, ...state.notifications]
+  // Diffusion de l'événement de fin de test par SSE
+  sseBroker.broadcast('STRESS_TEST_COMPLETED', {
+    campaignId,
+    concurrencyLevel,
+    unitsPerOrder,
+    expectedDeltaVolume,
+    actualDeltaVolume,
+    lostUnits,
+    totalDurationMs,
+    avgLatencyPerTx: Math.round(totalDurationMs / concurrencyLevel),
+    timestamp: new Date().toISOString()
   });
 
   res.json({
     success: true,
-    order: newOrder,
-    campaign: updatedCampaigns.find(c => c.id === campaignId)
+    mode: useLock ? 'ATOMIC_TRANSACTIONAL_LOCK (Défi 1 Résolu)' : 'UNSAFE_CONCURRENT (Non Protégé)',
+    summary: {
+      concurrencyLevel,
+      unitsPerOrder,
+      expectedDeltaVolume,
+      actualDeltaVolume,
+      lostUnits: Math.max(0, lostUnits),
+      raceConditionDetected: lostUnits > 0,
+      acidComplianceRatePct: lostUnits === 0 ? 100 : Math.round((actualDeltaVolume / expectedDeltaVolume) * 100),
+      totalDurationMs,
+      averageLatencyMs: Math.round(totalDurationMs / concurrencyLevel),
+      successCount,
+      failureCount
+    },
+    sampleOrders: executedResults.slice(0, 3),
+    campaign: finalCampaign
   });
+});
+
+// 5. Join Campaign (Atomic Reservation & Contract Creation avec Concurrence Protégée)
+app.post('/api/orders/join', async (req, res) => {
+  const { campaignId, quantity, notes, buyerId, companyName, contactName } = req.body;
+  const idempotencyKey = req.headers['idempotency-key'] as string;
+
+  try {
+    const result = await executeAtomicBooking({
+      campaignId,
+      buyerId: buyerId || req.b2bUser?.id || 'buyer-01',
+      quantity: Number(quantity),
+      companyName: companyName || req.b2bUser?.companyName,
+      contactName: contactName || req.b2bUser?.contactName,
+      notes,
+      idempotencyKey,
+      broadcastSSE: sseBroker.broadcast.bind(sseBroker)
+    });
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    res.json({
+      success: true,
+      order: result.order,
+      campaign: result.campaign,
+      tierUnlocked: result.tierUnlocked,
+      unlockedTier: result.unlockedTier,
+      message: result.message,
+      auditLog: result.auditLog
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err?.message || 'Erreur interne lors de la réservation atomique'
+    });
+  }
 });
 
 // 5. Sign Contract

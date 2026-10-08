@@ -91,21 +91,29 @@ export function initDatabase(): PlatformState {
 
 let saveTimer: NodeJS.Timeout | null = null;
 
-export function saveDatabase(): void {
+export function saveDatabase(immediate: boolean = false): void {
   currentState.lastUpdated = new Date().toISOString();
   if (saveTimer) clearTimeout(saveTimer);
 
-  saveTimer = setTimeout(() => {
+  const doSave = () => {
     try {
       if (!fs.existsSync(DB_DIR)) {
         fs.mkdirSync(DB_DIR, { recursive: true });
       }
-      fs.writeFileSync(DB_FILE, JSON.stringify(currentState, null, 2), 'utf-8');
-      console.log(`[EcoPool DB] Saved state to disk at ${new Date().toISOString()}`);
+      const tempFile = path.resolve(DB_DIR, `ecopool-db-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.tmp`);
+      fs.writeFileSync(tempFile, JSON.stringify(currentState, null, 2), 'utf-8');
+      fs.renameSync(tempFile, DB_FILE); // Atomic replace sous POSIX / Linux
+      // Atomic write successful
     } catch (err) {
-      console.error('[EcoPool DB] Failed to save state to disk:', err);
+      console.error('[EcoPool DB] Failed to save state to disk atomically:', err);
     }
-  }, 200);
+  };
+
+  if (immediate) {
+    doSave();
+  } else {
+    saveTimer = setTimeout(doSave, 80);
+  }
 }
 
 export function getState(): PlatformState {

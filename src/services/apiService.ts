@@ -368,3 +368,52 @@ export async function apiInjectTestFixture(fixtureType: string): Promise<{ succe
   }
   return { success: false, message: 'Erreur lors de l\'injection de la fixture.' };
 }
+
+// ==========================================
+// 9. PHASE 1 : CONCURRENCE ATOMIQUE & TÉLÉMÉTRIE DÉFI 1
+// ==========================================
+
+export async function apiGetConcurrencyTelemetry(): Promise<any> {
+  try {
+    const res = await fetch('/api/concurrency/telemetry');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get concurrency telemetry failed:', err);
+  }
+  return null;
+}
+
+export async function apiRunConcurrencyStressTest(params: {
+  campaignId?: string;
+  concurrencyLevel?: number;
+  unitsPerOrder?: number;
+  useLock?: boolean;
+}): Promise<any> {
+  try {
+    const res = await fetch('/api/concurrency/stress-test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Run concurrency stress-test failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetB2BSession(): Promise<any> {
+  try {
+    const res = await fetch('/api/auth/session');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get B2B session failed:', err);
+  }
+  return null;
+}

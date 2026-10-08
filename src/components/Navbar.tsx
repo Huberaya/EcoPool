@@ -20,7 +20,9 @@ import {
   ShieldAlert,
   Database,
   FlaskConical,
-  BadgeCheck
+  BadgeCheck,
+  Zap,
+  Radio
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -30,6 +32,7 @@ interface NavbarProps {
   onOpenAudit: () => void;
   onOpenPersistence?: () => void;
   onOpenValidation?: () => void;
+  onOpenConcurrency?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -38,7 +41,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAI,
   onOpenAudit,
   onOpenPersistence,
-  onOpenValidation
+  onOpenValidation,
+  onOpenConcurrency
 }) => {
   const { 
     userRole, 
@@ -49,7 +53,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     orders,
     currentBuyer,
     currentSupplier,
-    syncStatus 
+    syncStatus,
+    sseStatus 
   } = useEcoPool();
 
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -81,6 +86,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           <span>Escrow bancaire B2B séquestré</span>
           <span>•</span>
           <span>Certifications GRS & FSC vérifiées par tiers</span>
+          <span>•</span>
+          <button 
+            onClick={onOpenConcurrency}
+            className="text-amber-300 hover:text-amber-200 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+          >
+            <Zap className="w-3 h-3 text-amber-400" />
+            Concurrence & SSE (Phase 1)
+          </button>
+          <span>•</span>
           <button 
             onClick={onOpenValidation}
             className="text-indigo-300 hover:text-indigo-200 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
@@ -279,6 +293,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Controls: Role Switcher, AI Assistant, Notifications */}
           <div className="flex items-center gap-3">
+            {/* Phase 1: Concurrency & Real-Time SSE Workbench */}
+            <button
+              onClick={onOpenConcurrency}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-200 border border-emerald-700/70 font-semibold text-xs shadow transition-all cursor-pointer hover:border-emerald-500"
+              title="Banc d'Essai Concurrence, Atomicité & Server-Sent Events (Défi 1 - Phase 1)"
+            >
+              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden sm:inline">Concurrence & SSE</span>
+              <span className={`w-2 h-2 rounded-full ${
+                sseStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : sseStatus === 'connecting' ? 'bg-amber-400' : 'bg-rose-400'
+              }`} />
+            </button>
+
             {/* Test Scenarios & Validation (Option C) */}
             <button
               onClick={onOpenValidation}

@@ -12,8 +12,22 @@ import {
   UserRole,
   CampaignStatus,
   SupplierStatus,
-  CertificationStatus
+  CertificationStatus,
+  SyncStatus
 } from '../types';
+import { 
+  apiFetchState, 
+  apiJoinCampaign, 
+  apiSignContract, 
+  apiReleaseMilestone, 
+  apiUpdateCampaignStatus, 
+  apiCreateCampaign, 
+  apiSubmitDemand, 
+  apiConvertOpportunity, 
+  apiUpdateSupplierCert, 
+  apiRestoreBackup, 
+  apiResetDatabase 
+} from '../services/apiService';
 import { 
   initialCampaigns, 
   initialSuppliers, 
@@ -40,6 +54,13 @@ interface EcoPoolContextType {
   hubInventory: HubInventoryItem[];
   economicConfig: PlatformEconomicConfig;
   notifications: SystemNotification[];
+  
+  // Real Persistence & Synchronization
+  syncStatus: SyncStatus;
+  lastSyncedAt: string | null;
+  refreshSync: () => Promise<void>;
+  restoreFullBackup: (data: any) => Promise<boolean>;
+  resetPlatformData: () => Promise<boolean>;
   
   // Actions
   joinCampaign: (campaignId: string, quantity: number, notes?: string) => { success: boolean; orderId?: string; message: string };
@@ -126,7 +147,68 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const currentBuyer = buyerProfiles[0]; // Laboratoires Botanica France
   const currentSupplier = suppliers[0]; // Plastinnov Normandie
 
-  // Persist state updates
+  // Real Persistence Sync State
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('syncing');
+  const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+
+  // Sync with Backend Database API on mount
+  const refreshSync = async () => {
+    setSyncStatus('syncing');
+    try {
+      const remote = await apiFetchState();
+      if (remote) {
+        if (Array.isArray(remote.campaigns)) setCampaigns(remote.campaigns);
+        if (Array.isArray(remote.suppliers)) setSuppliers(remote.suppliers);
+        if (Array.isArray(remote.groupingDemands)) setGroupingDemands(remote.groupingDemands);
+        if (Array.isArray(remote.opportunities)) setOpportunities(remote.opportunities);
+        if (Array.isArray(remote.orders)) setOrders(remote.orders);
+        if (Array.isArray(remote.hubInventory)) setHubInventory(remote.hubInventory);
+        if (remote.economicConfig) setEconomicConfig(remote.economicConfig);
+        if (Array.isArray(remote.notifications)) setNotifications(remote.notifications);
+        setSyncStatus('online');
+        setLastSyncedAt(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        return;
+      }
+    } catch (err) {
+      console.warn('Sync error:', err);
+    }
+    setSyncStatus('offline');
+  };
+
+  useEffect(() => {
+    refreshSync();
+  }, []);
+
+  const restoreFullBackup = async (data: any): Promise<boolean> => {
+    setSyncStatus('syncing');
+    const res = await apiRestoreBackup(data);
+    if (res.success) {
+      await refreshSync();
+      return true;
+    }
+    return false;
+  };
+
+  const resetPlatformData = async (): Promise<boolean> => {
+    setSyncStatus('syncing');
+    const res = await apiResetDatabase();
+    if (res.success && res.data) {
+      if (res.data.campaigns) setCampaigns(res.data.campaigns);
+      if (res.data.suppliers) setSuppliers(res.data.suppliers);
+      if (res.data.groupingDemands) setGroupingDemands(res.data.groupingDemands);
+      if (res.data.opportunities) setOpportunities(res.data.opportunities);
+      if (res.data.orders) setOrders(res.data.orders);
+      if (res.data.hubInventory) setHubInventory(res.data.hubInventory);
+      if (res.data.economicConfig) setEconomicConfig(res.data.economicConfig);
+      if (res.data.notifications) setNotifications(res.data.notifications);
+      setSyncStatus('online');
+      setLastSyncedAt(new Date().toLocaleTimeString('fr-FR'));
+      return true;
+    }
+    return false;
+  };
+
+  // Persist state updates to local cache
   useEffect(() => {
     localStorage.setItem(`${STORAGE_PREFIX}role`, userRole);
   }, [userRole]);
@@ -323,6 +405,9 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     setNotifications(prev => [newNotif, ...prev]);
 
+    // Background server DB sync
+    apiJoinCampaign(campaignId, quantity, notes, currentBuyer.id).catch(e => console.warn('apiJoinCampaign error:', e));
+
     return { success: true, orderId, message: 'Réservation enregistrée avec succès.' };
   };
 
@@ -337,6 +422,7 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     setCampaigns(prev => [newCampaign, ...prev]);
+    apiCreateCampaign(newCampaign).catch(e => console.warn('apiCreateCampaign error:', e));
     
     setNotifications(prev => [
       {
@@ -591,6 +677,7 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
       read: false
     };
     setNotifications(prev => [notif, ...prev]);
+    apiSignContract(orderId, signatoryName, signatoryTitle).catch(e => console.warn('apiSignContract error:', e));
   };
 
   const releaseMilestone = (orderId: string, milestoneStage: 1 | 2 | 3) => {
@@ -618,6 +705,7 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
       read: false
     };
     setNotifications(prev => [notif, ...prev]);
+    apiReleaseMilestone(orderId, milestoneStage).catch(e => console.warn('apiReleaseMilestone error:', e));
   };
 
   return (
@@ -636,6 +724,11 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
         hubInventory,
         economicConfig,
         notifications,
+        syncStatus,
+        lastSyncedAt,
+        refreshSync,
+        restoreFullBackup,
+        resetPlatformData,
         joinCampaign,
         createCampaign,
         updateCampaignStatus,

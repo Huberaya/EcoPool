@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useEcoPool } from '../context/EcoPoolContext';
-import { ICPSector, BuyerProfile } from '../types';
+import { ICPSector, BuyerProfile, CompanyLookupResult } from '../types';
+import { apiLookupCompany } from '../services/apiService';
 import { 
   Building2, 
   CheckCircle2, 
@@ -13,6 +14,7 @@ import {
   TrendingUp, 
   Package,
   Layers,
+  Search,
   X
 } from 'lucide-react';
 
@@ -41,6 +43,36 @@ export const BuyerOnboardingModal: React.FC<BuyerOnboardingModalProps> = ({
   const [street, setStreet] = useState(currentBuyer.deliveryAddress.street);
   const [postalCode, setPostalCode] = useState(currentBuyer.deliveryAddress.postalCode);
   const [city, setCity] = useState(currentBuyer.deliveryAddress.city);
+
+  // Live INSEE / SIRENE lookup state
+  const [sireneSuggestions, setSireneSuggestions] = useState<CompanyLookupResult[]>([]);
+  const [isSearchingSirene, setIsSearchingSirene] = useState(false);
+  const [isVerifiedBySirene, setIsVerifiedBySirene] = useState(true);
+
+  // Debounced search on companyName changes
+  useEffect(() => {
+    if (!companyName || companyName.length < 3) {
+      setSireneSuggestions([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsSearchingSirene(true);
+      const results = await apiLookupCompany(companyName);
+      setSireneSuggestions(results.slice(0, 3));
+      setIsSearchingSirene(false);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [companyName]);
+
+  const handleSelectCompany = (comp: CompanyLookupResult) => {
+    setCompanyName(comp.companyName);
+    setSiren(comp.siren);
+    if (comp.street) setStreet(comp.street);
+    if (comp.postalCode) setPostalCode(comp.postalCode);
+    if (comp.city) setCity(comp.city);
+    setIsVerifiedBySirene(true);
+    setSireneSuggestions([]);
+  };
 
   // Step 2 : Profil d'Achat Responsable
   const [annualVolume, setAnnualVolume] = useState('50 000 à 100 000 unités/an');
@@ -133,14 +165,52 @@ export const BuyerOnboardingModal: React.FC<BuyerOnboardingModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Raison Sociale :</label>
+                <div className="relative">
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-slate-300 font-semibold block">Raison Sociale :</label>
+                    {isVerifiedBySirene && (
+                      <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> SIRENE/RNE Vérifié
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={companyName}
-                    onChange={e => setCompanyName(e.target.value)}
+                    onChange={e => {
+                      setCompanyName(e.target.value);
+                      setIsVerifiedBySirene(false);
+                    }}
+                    placeholder="Ex: Laboratoires Botanica, L'Oréal, Biocoop..."
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white"
                   />
+
+                  {/* Autocomplete Suggestions from Official French Registry */}
+                  {sireneSuggestions.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-slate-900 border border-emerald-500/50 rounded-xl shadow-2xl p-2 space-y-1">
+                      <span className="text-[10px] text-emerald-400 font-bold px-2 block">
+                        Suggestions officielles (API recherche-entreprises.gouv.fr) :
+                      </span>
+                      {sireneSuggestions.map((comp, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => handleSelectCompany(comp)}
+                          className="w-full text-left p-2 rounded-lg bg-slate-950 hover:bg-slate-800 transition-colors flex justify-between items-center text-xs cursor-pointer"
+                        >
+                          <div>
+                            <strong className="text-white block">{comp.companyName}</strong>
+                            <span className="text-[10px] text-slate-400">
+                              SIREN {comp.siren} • {comp.postalCode} {comp.city}
+                            </span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
+                            Auto-compléter
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>

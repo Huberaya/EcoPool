@@ -345,3 +345,49 @@ export interface PilotWeekMilestone {
   kpis: { label: string; current: string; target: string }[];
   deliverables: string[];
 }
+
+export interface CompanyLookupResult {
+  siren: string;
+  siret: string;
+  companyName: string;
+  tradeName?: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  nafCode: string;
+  vatNumber: string;
+  companySize?: string;
+  isMissionDriven?: boolean;
+  hasAdemeAid?: boolean;
+  isActive: boolean;
+}
+
+export interface CarbonComputeResult {
+  material: string;
+  quantity: number;
+  unitWeightKg: number;
+  totalWeightKg: number;
+  virginFootprintKgCO2e: number;
+  ecoFootprintKgCO2e: number;
+  avoidedKgCO2e: number;
+  reductionPercentage: number;
+  virginPlasticAvoidedKg: number;
+  waterSavedLiters: number;
+  carKmEquivalent: number;
+  ademeFactorCode: string;
+}
+
+export interface VirtualEscrowAccount {
+  orderId: string;
+  iban: string;
+  bic: string;
+  bankName: string;
+  beneficiary: string;
+  reference: string;
+  escrowAmountTTC: number;
+  status: 'active' | 'funded' | 'released' | 'refunded';
+  expiresAt: string;
+}
+
+export type SyncStatus = 'online' | 'syncing' | 'offline' | 'error';
+

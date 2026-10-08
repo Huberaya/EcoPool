@@ -13,17 +13,32 @@ import {
   Clock,
   Layers,
   FileText,
-  BadgePercent
+  BadgePercent,
+  Zap,
+  Database
 } from 'lucide-react';
 import { EscrowStatus, OrderReservation } from '../types';
+import { apiSimulateEscrowPayment, apiGenerateVirtualEscrow } from '../services/apiService';
 
 export const EscrowSecurityView: React.FC = () => {
-  const { orders, economicConfig } = useEcoPool();
+  const { orders, economicConfig, refreshSync } = useEcoPool();
 
   const [activeTab, setActiveTab] = useState<'transactions' | 'architecture' | 'conditions'>('transactions');
   const [filterEscrow, setFilterEscrow] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<OrderReservation | null>(null);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+
+  const handleLiveWebhookPayment = async (orderId: string, amount: number) => {
+    setActionNotice(`Appel du webhook bancaire ACPR pour la commande ${orderId}...`);
+    const res = await apiSimulateEscrowPayment(orderId, amount, 'sepa_instant', `SEPA-INST-${Math.floor(100000 + Math.random() * 900000)}`);
+    if (res.success) {
+      await refreshSync();
+      setActionNotice(`✅ Webhook SEPA Instantané validé pour ${orderId} (${amount.toLocaleString()} € TTC) ! Fonds cantonnés en séquestre.`);
+    } else {
+      setActionNotice(`Erreur webhook: ${res.message || 'Échec'}`);
+    }
+    setTimeout(() => setActionNotice(null), 5000);
+  };
 
   // Escrow statistics
   const totalEscrowHold = orders.reduce((sum, o) => {
@@ -220,7 +235,14 @@ export const EscrowSecurityView: React.FC = () => {
                       <span>Mode de règlement : <strong>Prélèvement SEPA B2B interentreprises</strong> (Débit différé validation MOQ)</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() => handleLiveWebhookPayment(order.id, order.totalTTC)}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold cursor-pointer transition-colors flex items-center gap-1.5"
+                      >
+                        <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                        Valider Virement SEPA (Webhook Live)
+                      </button>
                       <button
                         onClick={() => handleSimulateRelease(order.id)}
                         className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium cursor-pointer transition-colors"
@@ -231,7 +253,7 @@ export const EscrowSecurityView: React.FC = () => {
                         onClick={() => handleSimulateRefund(order.id)}
                         className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-950/60 hover:text-rose-300 border border-slate-700 text-slate-300 text-xs font-medium cursor-pointer transition-colors"
                       >
-                        Simuler Restitution (Si MOQ non atteinte)
+                        Simuler Restitution
                       </button>
                     </div>
                   </div>

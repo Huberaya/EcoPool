@@ -17,7 +17,8 @@ import {
   AlertCircle,
   Lock,
   Activity,
-  ShieldAlert 
+  ShieldAlert,
+  Database
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -25,13 +26,15 @@ interface NavbarProps {
   setCurrentTab: (tab: string) => void;
   onOpenAI: () => void;
   onOpenAudit: () => void;
+  onOpenPersistence?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   setCurrentTab,
   onOpenAI,
-  onOpenAudit
+  onOpenAudit,
+  onOpenPersistence
 }) => {
   const { 
     userRole, 
@@ -41,7 +44,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     opportunities,
     orders,
     currentBuyer,
-    currentSupplier 
+    currentSupplier,
+    syncStatus 
   } = useEcoPool();
 
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -263,6 +267,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Controls: Role Switcher, AI Assistant, Notifications */}
           <div className="flex items-center gap-3">
+            {/* Persistence & Real Integrations Button */}
+            <button
+              onClick={onOpenPersistence}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium text-xs shadow transition-all cursor-pointer"
+              title="Centre de Persistance & Intégrations Réelles (INSEE, ADEME, Séquestre, ERP)"
+            >
+              <Database className="w-3.5 h-3.5 text-blue-400" />
+              <span className="hidden sm:inline">Persistance & APIs</span>
+              <span className={`w-2 h-2 rounded-full ${
+                syncStatus === 'online' ? 'bg-emerald-400 animate-pulse' : syncStatus === 'syncing' ? 'bg-amber-400' : 'bg-rose-400'
+              }`} />
+            </button>
+
             {/* AI Assistant Button */}
             <button
               onClick={onOpenAI}

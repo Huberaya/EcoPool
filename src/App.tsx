@@ -15,6 +15,7 @@ import { RiskLitigationView } from './components/RiskLitigationView';
 import { DocumentCenterView } from './components/DocumentCenterView';
 import { AIAssistantModal } from './components/AIAssistantModal';
 import { AuditReportModal } from './components/AuditReportModal';
+import { PersistenceHubModal } from './components/PersistenceHubModal';
 import { Campaign, ICPSector } from './types';
 import { 
   Sparkles, 
@@ -27,7 +28,8 @@ import {
   Factory,
   Zap,
   Building2,
-  Package
+  Package,
+  Database
 } from 'lucide-react';
 
 function EcoPoolAppContent() {
@@ -37,6 +39,7 @@ function EcoPoolAppContent() {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [isAIModalOpen, setIsAIModalOpen] = useState<boolean>(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
+  const [isPersistenceModalOpen, setIsPersistenceModalOpen] = useState<boolean>(false);
 
   // Filters for Campaigns
   const [filterSector, setFilterSector] = useState<string>('all');
@@ -68,6 +71,7 @@ function EcoPoolAppContent() {
         setCurrentTab={setCurrentTab}
         onOpenAI={() => setIsAIModalOpen(true)}
         onOpenAudit={() => setIsAuditModalOpen(true)}
+        onOpenPersistence={() => setIsPersistenceModalOpen(true)}
       />
 
       {/* Main View Container */}
@@ -297,6 +301,12 @@ function EcoPoolAppContent() {
         onClose={() => setIsAuditModalOpen(false)}
       />
 
+      {/* Persistence & Real Integrations Control Center */}
+      <PersistenceHubModal
+        isOpen={isPersistenceModalOpen}
+        onClose={() => setIsPersistenceModalOpen(false)}
+      />
+
       {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 py-8 px-4 text-xs text-slate-400 mt-16">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -311,17 +321,25 @@ function EcoPoolAppContent() {
           </div>
 
           <div className="flex flex-wrap items-center gap-6 text-slate-400">
+            <button 
+              onClick={() => setIsPersistenceModalOpen(true)} 
+              className="text-blue-400 hover:text-blue-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <Database className="w-3.5 h-3.5" />
+              Persistance & Intégrations Réelles (API & DB)
+            </button>
             <button onClick={() => setIsAuditModalOpen(true)} className="hover:text-emerald-400 transition-colors cursor-pointer">
               Rapport d'Audit & Roadmap MVP
             </button>
             <button onClick={() => setIsAIModalOpen(true)} className="hover:text-emerald-400 transition-colors cursor-pointer">
               Assistant IA Sourcing
             </button>
-            <span>Conformité GRS, FSC & C2C</span>
+            <span>Conformité GRS & FSC</span>
             <span>Séquestre B2B Garanti</span>
           </div>
         </div>
       </footer>
+
 
     </div>
   );

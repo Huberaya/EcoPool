@@ -39,6 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     notifications, 
     markNotificationRead, 
     opportunities,
+    orders,
     currentBuyer,
     currentSupplier 
   } = useEcoPool();
@@ -48,6 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const unreadNotifs = notifications.filter(n => !n.read);
   const readyOppCount = opportunities.filter(o => o.status === 'moq_reached_ready').length;
+  const pendingContractsCount = orders.filter(o => o.contract && !o.contract.buyerSignature?.signed).length;
 
   const handleSelectRole = (role: UserRole) => {
     setUserRole(role);
@@ -172,6 +174,23 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Lock className="w-4 h-4" />
                 Séquestre Escrow
+              </button>
+
+              <button
+                onClick={() => setCurrentTab('documents')}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-1.5 relative ${
+                  currentTab === 'documents'
+                    ? 'bg-slate-800 text-emerald-400 shadow-inner'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                Contrats & RSE
+                {pendingContractsCount > 0 && (
+                  <span className="ml-1 px-1.5 py-0.2 bg-amber-500 text-slate-950 font-bold text-[10px] rounded-full">
+                    {pendingContractsCount}
+                  </span>
+                )}
               </button>
 
               <button

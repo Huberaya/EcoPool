@@ -12,6 +12,7 @@ import { CatalogView } from './components/CatalogView';
 import { EscrowSecurityView } from './components/EscrowSecurityView';
 import { AnalyticsKPIDashboard } from './components/AnalyticsKPIDashboard';
 import { RiskLitigationView } from './components/RiskLitigationView';
+import { DocumentCenterView } from './components/DocumentCenterView';
 import { AIAssistantModal } from './components/AIAssistantModal';
 import { AuditReportModal } from './components/AuditReportModal';
 import { Campaign, ICPSector } from './types';
@@ -238,7 +239,12 @@ function EcoPoolAppContent() {
           <EscrowSecurityView />
         )}
 
-        {/* TAB 4 ter: KPIs Stratégiques (Section 20) */}
+        {/* TAB 4 ter: Contrats & Documents Juridiques B2B */}
+        {currentTab === 'documents' && (
+          <DocumentCenterView />
+        )}
+
+        {/* TAB 4 quater: KPIs Stratégiques (Section 20) */}
         {currentTab === 'analytics' && (
           <AnalyticsKPIDashboard />
         )}

@@ -14,7 +14,8 @@ import {
   FileText,
   Clock
 } from 'lucide-react';
-import { CampaignStatus, SupplierStatus, CertificationStatus } from '../types';
+import { CampaignStatus, SupplierStatus, CertificationStatus, OrderReservation } from '../types';
+import { OfficialDocumentModal } from './OfficialDocumentModal';
 
 export const AdminDashboard: React.FC = () => {
   const { 
@@ -26,11 +27,14 @@ export const AdminDashboard: React.FC = () => {
     updateSubscriptionPrice,
     updateCampaignStatus,
     updateSupplierStatus,
-    updateCertificationStatus 
+    updateCertificationStatus,
+    releaseMilestone 
   } = useEcoPool();
 
-  const [activeTab, setActiveTab] = useState<'kpis' | 'economics' | 'campaigns' | 'suppliers' | 'certifications'>('kpis');
+  const [activeTab, setActiveTab] = useState<'kpis' | 'economics' | 'campaigns' | 'suppliers' | 'certifications' | 'actes'>('kpis');
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
+  const [selectedDocOrder, setSelectedDocOrder] = useState<OrderReservation | null>(null);
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
 
   // Compute live KPIs
   const totalVolumeAggregated = campaigns.reduce((sum, c) => sum + c.reservedVolume, 0);
@@ -144,6 +148,14 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           Contrôle Documentaire & Certifications
+        </button>
+        <button
+          onClick={() => setActiveTab('actes')}
+          className={`pb-3 font-semibold transition-colors whitespace-nowrap cursor-pointer border-b-2 ${
+            activeTab === 'actes' ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          Actes Juridiques & Séquestre Escrow ({orders.length})
         </button>
       </div>
 
@@ -430,6 +442,179 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Tab 6 : Actes Juridiques & Séquestre Escrow */}
+      {activeTab === 'actes' && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <FileText className="w-5 h-5 text-amber-400" />
+                Supervision des Contrats Tripartites & Déblocage des Jalons Escrow
+              </h3>
+              <p className="text-xs text-slate-400">
+                Validation des actes juridiques signés, vérification eIDAS et libération conditionnelle des fonds séquestre.
+              </p>
+            </div>
+            <div className="text-right">
+              <span className="text-xs text-slate-400">Total sous séquestre :</span>
+              <strong className="text-emerald-400 font-bold block text-sm">
+                {orders.reduce((sum, o) => sum + o.totalTTC, 0).toLocaleString()} € TTC
+              </strong>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {orders.map(order => {
+              const contract = order.contract;
+              const ms = contract?.escrowMilestones;
+
+              return (
+                <div key={order.id} className="p-5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-emerald-400">{order.id}</span>
+                        <span className="text-xs text-slate-400">• Réf Contrat : {contract?.contractNumber || 'CTR-2026'}</span>
+                        <span className="text-xs text-slate-500">• {order.reservedAt}</span>
+                      </div>
+                      <h4 className="font-bold text-white text-sm mt-0.5">{order.productName}</h4>
+                      <p className="text-xs text-slate-400">Acheteur : <strong>{order.companyName}</strong> • {order.quantity.toLocaleString()} u</p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {order.totalTTC.toLocaleString()} € TTC Séquestré
+                      </span>
+                      <button
+                        onClick={() => {
+                          setSelectedDocOrder(order);
+                          setIsDocModalOpen(true);
+                        }}
+                        className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 cursor-pointer flex items-center gap-1.5"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-amber-400" />
+                        Examiner l'Acte
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Escrow Milestones Liberation Buttons */}
+                  <div className="space-y-2">
+                    <span className="text-xs text-slate-400 font-semibold block">
+                      Jalons Industriels de Libération des Fonds Escrow :
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                      
+                      {/* Jalon 1 */}
+                      <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+                        ms?.stage1Released 
+                          ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-300' 
+                          : 'bg-slate-900 border-slate-800 text-slate-300'
+                      }`}>
+                        <div>
+                          <div className="flex items-center justify-between font-bold">
+                            <span>Jalon 1 (30%)</span>
+                            {ms?.stage1Released ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Clock className="w-4 h-4 text-slate-500" />}
+                          </div>
+                          <p className="text-[11px] text-slate-400 mt-1">Lancement Matière PCR</p>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-slate-800/80">
+                          {ms?.stage1Released ? (
+                            <span className="text-[10px] text-emerald-400 font-semibold">✓ 30% Débloqué au Fabricant</span>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                releaseMilestone(order.id, 1);
+                                setSuccessNotice(`Jalon 1 validé pour ${order.id}.`);
+                                setTimeout(() => setSuccessNotice(null), 3000);
+                              }}
+                              className="w-full py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] cursor-pointer"
+                            >
+                              Débloquer 30%
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Jalon 2 */}
+                      <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+                        ms?.stage2Released 
+                          ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-300' 
+                          : 'bg-slate-900 border-slate-800 text-slate-300'
+                      }`}>
+                        <div>
+                          <div className="flex items-center justify-between font-bold">
+                            <span>Jalon 2 (50%)</span>
+                            {ms?.stage2Released ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Clock className="w-4 h-4 text-slate-500" />}
+                          </div>
+                          <p className="text-[11px] text-slate-400 mt-1">Contrôle Qualité Hub (Pass)</p>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-slate-800/80">
+                          {ms?.stage2Released ? (
+                            <span className="text-[10px] text-emerald-400 font-semibold">✓ 50% Débloqué</span>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                releaseMilestone(order.id, 2);
+                                setSuccessNotice(`Jalon 2 (Contrôle Hub) validé pour ${order.id}.`);
+                                setTimeout(() => setSuccessNotice(null), 3000);
+                              }}
+                              className="w-full py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] cursor-pointer"
+                            >
+                              Débloquer 50% (QA Hub)
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Jalon 3 */}
+                      <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+                        ms?.stage3Released 
+                          ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-300' 
+                          : 'bg-slate-900 border-slate-800 text-slate-300'
+                      }`}>
+                        <div>
+                          <div className="flex items-center justify-between font-bold">
+                            <span>Jalon 3 (20%)</span>
+                            {ms?.stage3Released ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Clock className="w-4 h-4 text-slate-500" />}
+                          </div>
+                          <p className="text-[11px] text-slate-400 mt-1">Livraison Finale Émargée</p>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-slate-800/80">
+                          {ms?.stage3Released ? (
+                            <span className="text-[10px] text-emerald-400 font-semibold">✓ Solde clôturé</span>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                releaseMilestone(order.id, 3);
+                                setSuccessNotice(`Solde final de 20% libéré pour ${order.id}.`);
+                                setTimeout(() => setSuccessNotice(null), 3000);
+                              }}
+                              className="w-full py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] cursor-pointer"
+                            >
+                              Débloquer Solde 20%
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Official Document Viewer Modal */}
+      <OfficialDocumentModal
+        order={selectedDocOrder}
+        initialDocType="contract"
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
+      />
 
     </div>
   );

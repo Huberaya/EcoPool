@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useEcoPool } from '../context/EcoPoolContext';
+import { OrderReservation } from '../types';
+import { OfficialDocumentModal } from './OfficialDocumentModal';
 import { 
   Building2, 
   TrendingDown, 
@@ -11,7 +13,11 @@ import {
   Download, 
   CheckCircle2, 
   Truck,
-  ExternalLink
+  ExternalLink,
+  PenTool,
+  Printer,
+  Eye,
+  AlertCircle
 } from 'lucide-react';
 
 export const BuyerDashboard: React.FC = () => {
@@ -19,6 +25,17 @@ export const BuyerDashboard: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'commandes' | 'historique' | 'documents'>('commandes');
   const [downloadMsg, setDownloadMsg] = useState<string | null>(null);
+
+  // Document modal state
+  const [selectedDocOrder, setSelectedDocOrder] = useState<OrderReservation | null>(null);
+  const [selectedDocType, setSelectedDocType] = useState<'po' | 'contract' | 'rse'>('po');
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+
+  const handleOpenDoc = (order: OrderReservation, type: 'po' | 'contract' | 'rse') => {
+    setSelectedDocOrder(order);
+    setSelectedDocType(type);
+    setIsDocModalOpen(true);
+  };
 
   // Aggregate user stats
   const totalUnits = orders.reduce((sum, o) => sum + o.quantity, 0);
@@ -216,6 +233,54 @@ export const BuyerDashboard: React.FC = () => {
                     ))}
                   </div>
                 </div>
+
+                {/* Official Documents & Signatures Action Bar */}
+                <div className="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-400 font-medium">Actes officiels :</span>
+                    {order.contract?.buyerSignature?.signed ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md border border-emerald-500/20">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Contrat Tripartite Signé
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/20">
+                        <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+                        Signature Acheteur requise
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenDoc(order, 'po')}
+                      className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 border border-slate-700 text-xs"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-slate-400" />
+                      Bon de Commande (PO)
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenDoc(order, 'contract')}
+                      className={`px-3 py-1.5 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-semibold ${
+                        order.contract?.buyerSignature?.signed
+                          ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                          : 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-950/40'
+                      }`}
+                    >
+                      <PenTool className="w-3.5 h-3.5" />
+                      {order.contract?.buyerSignature?.signed ? 'Consulter le Contrat' : 'Signer le Contrat Tripartite'}
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenDoc(order, 'rse')}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 hover:text-emerald-200 transition-colors cursor-pointer flex items-center gap-1.5 border border-emerald-800/80 text-xs"
+                    >
+                      <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+                      Attestation RSE Scope 3
+                    </button>
+                  </div>
+                </div>
               </div>
             ))
           )}
@@ -278,10 +343,12 @@ export const BuyerDashboard: React.FC = () => {
       {activeTab === 'documents' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { name: 'Attestation_GRS_Plastinnov_Lot_2026.pdf', type: 'Certificat Matière Recyclée GRS', size: '1.4 Mo' },
-            { name: 'Contrat_Escrow_B2B_EcoPool_Ord881.pdf', type: 'Contrat de Séquestre Bancaire', size: '420 Ko' },
-            { name: 'Fiche_Technique_Flacon_250ml_PCR.pdf', type: 'Fiche Technique & Inertie Cosmétique', size: '890 Ko' },
-            { name: 'Attestation_C2C_Silver_Verre_50ml.pdf', type: 'Certificat Cradle to Cradle', size: '1.1 Mo' }
+            { name: 'Bon_de_Commande_Officiel_PO_881.pdf', type: 'Bon de Commande Séquestre B2B', size: '320 Ko', docType: 'po' as const, order: orders[0] },
+            { name: 'Contrat_Cadre_Tripartite_Groupage_882.pdf', type: 'Contrat Tripartite eIDAS', size: '540 Ko', docType: 'contract' as const, order: orders[1] || orders[0] },
+            { name: 'Attestation_RSE_Scope3_CSRD_2026.pdf', type: 'Bilan Carbone Certifié Scope 3', size: '420 Ko', docType: 'rse' as const, order: orders[0] },
+            { name: 'Attestation_GRS_Plastinnov_Lot_2026.pdf', type: 'Certificat Matière Recyclée GRS 4.0', size: '1.4 Mo', docType: 'po' as const, order: orders[0] },
+            { name: 'Fiche_Technique_Flacon_250ml_PCR.pdf', type: 'Fiche Technique & Inertie Cosmétique', size: '890 Ko', docType: 'po' as const, order: orders[0] },
+            { name: 'Attestation_C2C_Silver_Verre_50ml.pdf', type: 'Certificat Cradle to Cradle', size: '1.1 Mo', docType: 'rse' as const, order: orders[2] || orders[0] }
           ].map(doc => (
             <div key={doc.name} className="p-4 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
               <div className="flex items-center gap-3">
@@ -293,17 +360,36 @@ export const BuyerDashboard: React.FC = () => {
                   <p className="text-[11px] text-slate-400">{doc.type} • {doc.size}</p>
                 </div>
               </div>
-              <button
-                onClick={() => handleDownloadDoc(doc.name)}
-                className="p-2 rounded-lg bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white transition-colors cursor-pointer"
-                title="Télécharger le document"
-              >
-                <Download className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                {doc.order && (
+                  <button
+                    onClick={() => handleOpenDoc(doc.order, doc.docType)}
+                    className="p-2 rounded-lg bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                    title="Visualiser et imprimer le document officiel"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDownloadDoc(doc.name)}
+                  className="p-2 rounded-lg bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  title="Télécharger le fichier"
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
+
+      {/* Official Document Viewer Modal */}
+      <OfficialDocumentModal
+        order={selectedDocOrder}
+        initialDocType={selectedDocType}
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
+      />
 
     </div>
   );

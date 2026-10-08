@@ -54,6 +54,8 @@ interface EcoPoolContextType {
   updateCommissionRate: (ratePct: number) => void;
   updateSubscriptionPrice: (planId: string, newPrice: number) => void;
   markNotificationRead: (id: string) => void;
+  signContract: (orderId: string, signatoryName: string, signatoryTitle: string) => void;
+  releaseMilestone: (orderId: string, milestoneStage: 1 | 2 | 3) => void;
   calculateSavings: (campaign: Campaign, quantity: number) => {
     soloTotal: number;
     groupTotal: number;
@@ -244,8 +246,11 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     setCampaigns(prev => prev.map(c => c.id === campaignId ? updatedCampaign : c));
 
-    // Create Order Record
+    // Create Order Record & Initial Tripartite Contract
     const orderId = `ord-${Math.floor(1000 + Math.random() * 9000)}`;
+    const co2SavedKg = Math.round((campaign.product.co2SavedPerUnitGrams * quantity) / 1000);
+    const virginPlasticAvoidedKg = Math.round((campaign.product.virginPlasticAvoidedGrams * quantity) / 1000);
+
     const newOrder: OrderReservation = {
       id: orderId,
       campaignId: campaign.id,
@@ -264,7 +269,44 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
       reservedAt: new Date().toISOString().replace('T', ' ').slice(0, 16),
       hubTrackingNumber: `HUB-NRM-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       finalTrackingNumber: `ECO-EXP-${Math.floor(10000 + Math.random() * 90000)}`,
-      logisticsStep: 'reception_hub'
+      logisticsStep: 'reception_hub',
+      contract: {
+        contractNumber: `CTR-2026-EP-${orderId.replace('ord-', '')}`,
+        poNumber: `PO-2026-EP-${orderId.replace('ord-', '')}`,
+        rseCertNumber: `RSE-2026-CSRD-${Math.floor(1000 + Math.random() * 9000)}`,
+        generatedDate: new Date().toISOString().slice(0, 10),
+        buyerSignature: {
+          signed: false,
+          signatoryName: currentBuyer.contactName,
+          signatoryTitle: 'Directrice Achats & RSE'
+        },
+        ecopoolSignature: {
+          signed: true,
+          signatoryName: 'Alexandre Roche (EcoPool SAS)',
+          signedAt: new Date().toISOString().slice(0, 10) + ' 10:00 CET',
+          hashSha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'
+        },
+        supplierSignature: {
+          signed: true,
+          signatoryName: `${campaign.supplier.name} - Direction Industrielle`,
+          signedAt: new Date().toISOString().slice(0, 10) + ' 11:30 CET'
+        },
+        escrowMilestones: {
+          stage1Pct: 30,
+          stage1Released: true,
+          stage2Pct: 50,
+          stage2Released: false,
+          stage3Pct: 20,
+          stage3Released: false
+        },
+        carbonMetrics: {
+          co2AvoidedKg: co2SavedKg,
+          virginPlasticAvoidedKg,
+          recycledContentPct: campaign.product.recycledPercentage,
+          waterSavedLiters: Math.round(quantity * 0.12),
+          treeEquivalent: Math.max(1, Math.round(co2SavedKg / 20))
+        }
+      }
     };
 
     setOrders(prev => [newOrder, ...prev]);
@@ -507,6 +549,77 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
+  const signContract = (orderId: string, signatoryName: string, signatoryTitle: string) => {
+    const timestamp = new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }) + ' CET';
+    const fakeHash = Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+
+    setOrders(prev => prev.map(order => {
+      if (order.id !== orderId) return order;
+      const currentContract = order.contract || {
+        contractNumber: `CTR-2026-EP-${order.id.replace('ord-', '')}`,
+        poNumber: `PO-2026-EP-${order.id.replace('ord-', '')}`,
+        rseCertNumber: `RSE-2026-CSRD-${Math.floor(1000 + Math.random() * 9000)}`,
+        generatedDate: order.reservedAt.slice(0, 10),
+        buyerSignature: { signed: false, signatoryName, signatoryTitle },
+        ecopoolSignature: { signed: true, signatoryName: 'Alexandre Roche (EcoPool SAS)', signedAt: timestamp, hashSha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08' },
+        supplierSignature: { signed: true, signatoryName: 'Direction Industrielle', signedAt: timestamp },
+        escrowMilestones: { stage1Pct: 30, stage1Released: true, stage2Pct: 50, stage2Released: false, stage3Pct: 20, stage3Released: false },
+        carbonMetrics: { co2AvoidedKg: Math.round(order.quantity * 0.052), virginPlasticAvoidedKg: Math.round(order.quantity * 0.026), recycledContentPct: 100, waterSavedLiters: Math.round(order.quantity * 0.13), treeEquivalent: Math.max(1, Math.round(order.quantity * 0.0026)) }
+      };
+
+      return {
+        ...order,
+        contract: {
+          ...currentContract,
+          buyerSignature: {
+            signed: true,
+            signatoryName,
+            signatoryTitle,
+            signedAt: timestamp,
+            hashSha256: fakeHash
+          }
+        }
+      };
+    }));
+
+    const notif: SystemNotification = {
+      id: `notif-${Date.now()}`,
+      title: 'Contrat Tripartite Signé Numériquement !',
+      message: `Le contrat cadre pour la commande ${orderId} a été signé avec succès par ${signatoryName}. Empreinte cryptographique certifiée eIDAS horodatée.`,
+      type: 'success',
+      timestamp: 'À l’instant',
+      read: false
+    };
+    setNotifications(prev => [notif, ...prev]);
+  };
+
+  const releaseMilestone = (orderId: string, milestoneStage: 1 | 2 | 3) => {
+    setOrders(prev => prev.map(order => {
+      if (order.id !== orderId || !order.contract) return order;
+      const ms = { ...order.contract.escrowMilestones };
+      if (milestoneStage === 1) ms.stage1Released = true;
+      if (milestoneStage === 2) ms.stage2Released = true;
+      if (milestoneStage === 3) ms.stage3Released = true;
+      return {
+        ...order,
+        contract: {
+          ...order.contract,
+          escrowMilestones: ms
+        }
+      };
+    }));
+
+    const notif: SystemNotification = {
+      id: `notif-${Date.now()}`,
+      title: `Jalon Escrow #${milestoneStage} Débloqué`,
+      message: `La tranche de paiement pour la commande ${orderId} a été validée et débloquée auprès de l'établissement financier séquestre.`,
+      type: 'info',
+      timestamp: 'À l’instant',
+      read: false
+    };
+    setNotifications(prev => [notif, ...prev]);
+  };
+
   return (
     <EcoPoolContext.Provider
       value={{
@@ -535,6 +648,8 @@ export const EcoPoolProvider: React.FC<{ children: React.ReactNode }> = ({ child
         updateCommissionRate,
         updateSubscriptionPrice,
         markNotificationRead,
+        signContract,
+        releaseMilestone,
         calculateSavings
       }}
     >

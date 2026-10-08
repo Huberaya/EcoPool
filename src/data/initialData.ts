@@ -1017,7 +1017,46 @@ export const initialOrders: OrderReservation[] = [
     reservedAt: '2026-09-12 14:30',
     hubTrackingNumber: 'HUB-NRM-2026-0914',
     finalTrackingNumber: 'ECO-BTK-FR-77192',
-    logisticsStep: 'controle_lot'
+    logisticsStep: 'controle_lot',
+    contract: {
+      contractNumber: 'CTR-2026-EP-881',
+      poNumber: 'PO-2026-EP-881',
+      rseCertNumber: 'RSE-2026-CSRD-0419',
+      generatedDate: '2026-09-12',
+      buyerSignature: {
+        signed: true,
+        signatoryName: 'Dr. Hélène Mercier',
+        signatoryTitle: 'Directrice Achats & RSE',
+        signedAt: '2026-09-12 15:10 CET',
+        hashSha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+      },
+      ecopoolSignature: {
+        signed: true,
+        signatoryName: 'Alexandre Roche',
+        signedAt: '2026-09-12 15:12 CET',
+        hashSha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'
+      },
+      supplierSignature: {
+        signed: true,
+        signatoryName: 'Jean-Marc Vasseur (Plastinnov)',
+        signedAt: '2026-09-12 16:00 CET'
+      },
+      escrowMilestones: {
+        stage1Pct: 30,
+        stage1Released: true,
+        stage2Pct: 50,
+        stage2Released: false,
+        stage3Pct: 20,
+        stage3Released: false
+      },
+      carbonMetrics: {
+        co2AvoidedKg: 780,
+        virginPlasticAvoidedKg: 390,
+        recycledContentPct: 100,
+        waterSavedLiters: 1950,
+        treeEquivalent: 39
+      }
+    }
   },
   {
     id: 'ord-882',
@@ -1037,7 +1076,44 @@ export const initialOrders: OrderReservation[] = [
     reservedAt: '2026-09-05 10:15',
     hubTrackingNumber: 'HUB-NRM-2026-0884',
     finalTrackingNumber: 'ECO-BTK-FR-77193',
-    logisticsStep: 'reception_hub'
+    logisticsStep: 'reception_hub',
+    contract: {
+      contractNumber: 'CTR-2026-EP-882',
+      poNumber: 'PO-2026-EP-882',
+      rseCertNumber: 'RSE-2026-CSRD-0420',
+      generatedDate: '2026-09-05',
+      buyerSignature: {
+        signed: false,
+        signatoryName: 'Dr. Hélène Mercier',
+        signatoryTitle: 'Directrice Achats & RSE'
+      },
+      ecopoolSignature: {
+        signed: true,
+        signatoryName: 'Alexandre Roche',
+        signedAt: '2026-09-05 10:30 CET',
+        hashSha256: '7d793037a0760186574b0282f2f435e7b1e51a46b506a3e4709f02cacf3b27a3'
+      },
+      supplierSignature: {
+        signed: true,
+        signatoryName: 'Jean-Marc Vasseur (Plastinnov)',
+        signedAt: '2026-09-05 11:00 CET'
+      },
+      escrowMilestones: {
+        stage1Pct: 30,
+        stage1Released: true,
+        stage2Pct: 50,
+        stage2Released: false,
+        stage3Pct: 20,
+        stage3Released: false
+      },
+      carbonMetrics: {
+        co2AvoidedKg: 1296,
+        virginPlasticAvoidedKg: 648,
+        recycledContentPct: 100,
+        waterSavedLiters: 3240,
+        treeEquivalent: 65
+      }
+    }
   },
   {
     id: 'ord-883',
@@ -1055,7 +1131,46 @@ export const initialOrders: OrderReservation[] = [
     escrowStatus: 'paiement_securise',
     paymentMethod: 'prelevement_sepa_b2b',
     reservedAt: '2026-09-10 16:45',
-    logisticsStep: 'reception_hub'
+    logisticsStep: 'reception_hub',
+    contract: {
+      contractNumber: 'CTR-2026-EP-883',
+      poNumber: 'PO-2026-EP-883',
+      rseCertNumber: 'RSE-2026-CSRD-0421',
+      generatedDate: '2026-09-10',
+      buyerSignature: {
+        signed: true,
+        signatoryName: 'Dr. Hélène Mercier',
+        signatoryTitle: 'Directrice Achats & RSE',
+        signedAt: '2026-09-10 17:00 CET',
+        hashSha256: '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a'
+      },
+      ecopoolSignature: {
+        signed: true,
+        signatoryName: 'Alexandre Roche',
+        signedAt: '2026-09-10 17:05 CET',
+        hashSha256: 'ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d'
+      },
+      supplierSignature: {
+        signed: true,
+        signatoryName: 'Claire Dufresne (Verreries de la Bresle)',
+        signedAt: '2026-09-10 17:30 CET'
+      },
+      escrowMilestones: {
+        stage1Pct: 30,
+        stage1Released: true,
+        stage2Pct: 50,
+        stage2Released: false,
+        stage3Pct: 20,
+        stage3Released: false
+      },
+      carbonMetrics: {
+        co2AvoidedKg: 648,
+        virginPlasticAvoidedKg: 320,
+        recycledContentPct: 85,
+        waterSavedLiters: 1600,
+        treeEquivalent: 32
+      }
+    }
   }
 ];
 

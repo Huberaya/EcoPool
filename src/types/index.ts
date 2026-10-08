@@ -206,6 +206,46 @@ export type EscrowStatus =
   | 'remboursement'
   | 'echec';
 
+export interface TripartiteContract {
+  contractNumber: string;
+  poNumber: string;
+  rseCertNumber: string;
+  generatedDate: string;
+  buyerSignature: {
+    signed: boolean;
+    signatoryName: string;
+    signatoryTitle: string;
+    signedAt?: string;
+    hashSha256?: string;
+  };
+  ecopoolSignature: {
+    signed: boolean;
+    signatoryName: string;
+    signedAt?: string;
+    hashSha256: string;
+  };
+  supplierSignature: {
+    signed: boolean;
+    signatoryName: string;
+    signedAt?: string;
+  };
+  escrowMilestones: {
+    stage1Pct: number; // 30% Engagement Matière
+    stage1Released: boolean;
+    stage2Pct: number; // 50% Réception & Contrôle Hub
+    stage2Released: boolean;
+    stage3Pct: number; // 20% Réception Finale Acheteur
+    stage3Released: boolean;
+  };
+  carbonMetrics: {
+    co2AvoidedKg: number;
+    virginPlasticAvoidedKg: number;
+    recycledContentPct: number;
+    waterSavedLiters: number;
+    treeEquivalent: number;
+  };
+}
+
 export interface OrderReservation {
   id: string;
   campaignId: string;
@@ -225,6 +265,7 @@ export interface OrderReservation {
   hubTrackingNumber?: string;
   finalTrackingNumber?: string;
   logisticsStep: 'reception_hub' | 'controle_lot' | 'repartition' | 'expedie' | 'livre';
+  contract?: TripartiteContract;
 }
 
 export interface HubInventoryItem {

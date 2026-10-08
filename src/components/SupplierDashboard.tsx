@@ -13,17 +13,21 @@ import {
   Upload,
   ArrowRight
 } from 'lucide-react';
-import { CampaignStatus } from '../types';
+import { CampaignStatus, OrderReservation } from '../types';
+import { OfficialDocumentModal } from './OfficialDocumentModal';
 
 export const SupplierDashboard: React.FC = () => {
   const { 
     currentSupplier, 
     campaigns, 
+    orders,
     updateCampaignStatus, 
     updateCertificationStatus 
   } = useEcoPool();
 
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
+  const [selectedDocOrder, setSelectedDocOrder] = useState<OrderReservation | null>(null);
+  const [isDocModalOpen, setIsDocModalOpen] = useState<boolean>(false);
 
   // Filter campaigns belonging to this supplier
   const supplierCampaigns = campaigns.filter(c => c.supplier.id === currentSupplier.id);
@@ -183,6 +187,18 @@ export const SupplierDashboard: React.FC = () => {
                         En attente du franchissement des {(c.moq - c.reservedVolume).toLocaleString()} u restantes.
                       </span>
                     )}
+
+                    <button
+                      onClick={() => {
+                        const matchingOrder = orders.find(o => o.campaignId === c.id) || orders[0];
+                        setSelectedDocOrder(matchingOrder);
+                        setIsDocModalOpen(true);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-blue-400" />
+                      Voir PO & Contrat Cadre
+                    </button>
                   </div>
                 </div>
               </div>
@@ -242,6 +258,14 @@ export const SupplierDashboard: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Official Document Viewer Modal */}
+      <OfficialDocumentModal
+        order={selectedDocOrder}
+        initialDocType="contract"
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
+      />
 
     </div>
   );

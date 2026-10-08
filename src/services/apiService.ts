@@ -285,6 +285,8 @@ export async function apiGenerateVirtualEscrow(
   return null;
 }
 
+export const apiGenerateEscrowVA = apiGenerateVirtualEscrow;
+
 // 4. Simulate Escrow Payment Webhook
 export async function apiSimulateEscrowPayment(
   orderId: string, 
@@ -335,4 +337,34 @@ export async function apiResetDatabase(): Promise<{ success: boolean; data?: Bac
     console.warn('[EcoPool API] Reset database failed:', err);
   }
   return { success: false };
+}
+
+// 7. Automated Test Runner (Option C)
+export async function apiRunServerTests(): Promise<any> {
+  try {
+    const res = await fetch('/api/tests/run', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Run server tests failed:', err);
+  }
+  return null;
+}
+
+// 8. Inject Test Fixtures (Option C)
+export async function apiInjectTestFixture(fixtureType: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch('/api/tests/fixture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fixtureType })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Inject test fixture failed:', err);
+  }
+  return { success: false, message: 'Erreur lors de l\'injection de la fixture.' };
 }

@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { CampaignStatus, SupplierStatus, CertificationStatus, OrderReservation } from '../types';
 import { OfficialDocumentModal } from './OfficialDocumentModal';
+import { ScenarioValidationModal } from './ScenarioValidationModal';
+import { FlaskConical, BadgeCheck } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { 
@@ -35,6 +37,7 @@ export const AdminDashboard: React.FC = () => {
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [selectedDocOrder, setSelectedDocOrder] = useState<OrderReservation | null>(null);
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  const [isValidationModalOpen, setIsValidationModalOpen] = useState(false);
 
   // Compute live KPIs
   const totalVolumeAggregated = campaigns.reduce((sum, c) => sum + c.reservedVolume, 0);
@@ -87,15 +90,26 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Global GMV Summary */}
-        <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex gap-6 text-center">
-          <div>
-            <span className="text-[10px] text-slate-400 block uppercase">GMV Sous Séquestre</span>
-            <strong className="text-lg font-bold text-emerald-400">{Math.round(totalGMV).toLocaleString()} €</strong>
-          </div>
-          <div className="border-l border-slate-800 pl-6">
-            <span className="text-[10px] text-slate-400 block uppercase">Taux Réussite MOQ</span>
-            <strong className="text-lg font-bold text-teal-300">{moqSuccessRate}%</strong>
+        {/* Global GMV Summary & Option C Action */}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <button
+            onClick={() => setIsValidationModalOpen(true)}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/70 text-indigo-200 font-bold text-xs flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all hover:scale-105"
+          >
+            <FlaskConical className="w-4 h-4 text-indigo-400" />
+            <span>Scénarios de Tests & Validation (Option C)</span>
+            <span className="px-1.5 py-0.5 rounded bg-indigo-500/30 text-indigo-300 text-[10px]">6/6 Validés</span>
+          </button>
+
+          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex gap-6 text-center">
+            <div>
+              <span className="text-[10px] text-slate-400 block uppercase">GMV Sous Séquestre</span>
+              <strong className="text-lg font-bold text-emerald-400">{Math.round(totalGMV).toLocaleString()} €</strong>
+            </div>
+            <div className="border-l border-slate-800 pl-6">
+              <span className="text-[10px] text-slate-400 block uppercase">Taux Réussite MOQ</span>
+              <strong className="text-lg font-bold text-teal-300">{moqSuccessRate}%</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -614,6 +628,12 @@ export const AdminDashboard: React.FC = () => {
         initialDocType="contract"
         isOpen={isDocModalOpen}
         onClose={() => setIsDocModalOpen(false)}
+      />
+
+      {/* Scenario Validation Modal */}
+      <ScenarioValidationModal
+        isOpen={isValidationModalOpen}
+        onClose={() => setIsValidationModalOpen(false)}
       />
 
     </div>

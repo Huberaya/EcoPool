@@ -204,6 +204,7 @@ export type EscrowStatus =
   | 'paiement_securise'
   | 'paiement_libere'
   | 'remboursement'
+  | 'bloque_litige'
   | 'echec';
 
 export interface TripartiteContract {
@@ -266,6 +267,7 @@ export interface OrderReservation {
   finalTrackingNumber?: string;
   logisticsStep: 'reception_hub' | 'controle_lot' | 'repartition' | 'expedie' | 'livre';
   contract?: TripartiteContract;
+  notes?: string;
 }
 
 export interface HubInventoryItem {
@@ -390,4 +392,72 @@ export interface VirtualEscrowAccount {
 }
 
 export type SyncStatus = 'online' | 'syncing' | 'offline' | 'error';
+
+// ==========================================
+// SCÉNARIOS DE TESTS & VALIDATION DES PARCOURS (OPTION C)
+// ==========================================
+
+export type TestExecutionStatus = 'idle' | 'running' | 'passed' | 'failed' | 'warning';
+
+export interface TestCaseAssertion {
+  id: string;
+  name: string;
+  description: string;
+  expected: string | number | boolean;
+  actual: string | number | boolean;
+  passed: boolean;
+  metric?: string;
+  details?: string;
+}
+
+export interface TestScenarioStep {
+  id: string;
+  stepNumber: number;
+  title: string;
+  description: string;
+  actor: 'Acheteur (PME)' | 'Fournisseur (Usine)' | 'Algorithme EcoPool' | 'Hub Logistique' | 'Séquestre Escrow' | 'Admin & Juridique';
+  actionName: string;
+  status: TestExecutionStatus;
+  durationMs?: number;
+  assertions: TestCaseAssertion[];
+  logs?: string[];
+  outputData?: Record<string, any>;
+}
+
+export interface TestScenario {
+  id: string;
+  code: string; // e.g. "SCN-01"
+  title: string;
+  category: 
+    | 'Parcours Acheteur' 
+    | 'Moteur Agrégation' 
+    | 'Fournisseur & QA Hub' 
+    | 'Séquestre & Litiges' 
+    | 'RSE & ADEME' 
+    | 'Résilience & Persistence';
+  description: string;
+  targetEntity: string;
+  prerequisites: string;
+  steps: TestScenarioStep[];
+  overallStatus: TestExecutionStatus;
+  lastRunTimestamp?: string;
+  durationMs?: number;
+  criticality: 'Critique' | 'Haute' | 'Moyenne';
+}
+
+export interface ValidationSuiteReport {
+  suiteId: string;
+  generatedAt: string;
+  auditor: string;
+  totalScenarios: number;
+  passedScenarios: number;
+  failedScenarios: number;
+  totalAssertions: number;
+  passedAssertions: number;
+  failedAssertions: number;
+  totalDurationMs: number;
+  complianceRate: number; // 0 - 100%
+  scenarios: TestScenario[];
+  summaryMessage: string;
+}
 

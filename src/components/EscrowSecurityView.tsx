@@ -69,6 +69,10 @@ export const EscrowSecurityView: React.FC = () => {
         return { label: 'En attente mandat SEPA', bg: 'bg-slate-700 text-slate-300 border-slate-600' };
       case 'echec':
         return { label: 'Échec Transaction', bg: 'bg-rose-500/20 text-rose-300 border-rose-500/40' };
+      case 'bloque_litige':
+        return { label: 'Séquestre Bloqué (Litige)', bg: 'bg-rose-500/20 text-rose-300 border-rose-500/40' };
+      default:
+        return { label: 'Séquestré Cantonnée', bg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' };
     }
   };
 

@@ -18,7 +18,9 @@ import {
   Lock,
   Activity,
   ShieldAlert,
-  Database
+  Database,
+  FlaskConical,
+  BadgeCheck
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -27,6 +29,7 @@ interface NavbarProps {
   onOpenAI: () => void;
   onOpenAudit: () => void;
   onOpenPersistence?: () => void;
+  onOpenValidation?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -34,7 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   setCurrentTab,
   onOpenAI,
   onOpenAudit,
-  onOpenPersistence
+  onOpenPersistence,
+  onOpenValidation
 }) => {
   const { 
     userRole, 
@@ -77,6 +81,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           <span>Escrow bancaire B2B séquestré</span>
           <span>•</span>
           <span>Certifications GRS & FSC vérifiées par tiers</span>
+          <button 
+            onClick={onOpenValidation}
+            className="text-indigo-300 hover:text-indigo-200 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+          >
+            <FlaskConical className="w-3 h-3 text-indigo-400" />
+            Validation & Tests (Option C)
+          </button>
+          <span>•</span>
           <button 
             onClick={onOpenAudit}
             className="text-emerald-400 hover:text-emerald-300 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
@@ -267,6 +279,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Controls: Role Switcher, AI Assistant, Notifications */}
           <div className="flex items-center gap-3">
+            {/* Test Scenarios & Validation (Option C) */}
+            <button
+              onClick={onOpenValidation}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-950/70 hover:bg-indigo-900/80 text-indigo-200 border border-indigo-700/60 font-semibold text-xs shadow transition-all cursor-pointer hover:border-indigo-500"
+              title="Centre de Validation des Parcours & Scénarios de Test B2B (Option C)"
+            >
+              <FlaskConical className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="hidden sm:inline">Tests & Validation</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-indigo-500/30 text-indigo-300 text-[10px] font-bold">
+                6/6
+              </span>
+            </button>
+
             {/* Persistence & Real Integrations Button */}
             <button
               onClick={onOpenPersistence}

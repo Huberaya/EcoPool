@@ -18,7 +18,8 @@ import { CampaignStatus, SupplierStatus, CertificationStatus, OrderReservation }
 import { OfficialDocumentModal } from './OfficialDocumentModal';
 import { ScenarioValidationModal } from './ScenarioValidationModal';
 import { ConcurrencyWorkbenchModal } from './ConcurrencyWorkbenchModal';
-import { FlaskConical, BadgeCheck, Zap } from 'lucide-react';
+import { Phase2ExecutionWorkbenchModal } from './Phase2ExecutionWorkbenchModal';
+import { FlaskConical, BadgeCheck, Zap, Lock } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { 
@@ -40,6 +41,7 @@ export const AdminDashboard: React.FC = () => {
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [isValidationModalOpen, setIsValidationModalOpen] = useState(false);
   const [isConcurrencyModalOpen, setIsConcurrencyModalOpen] = useState(false);
+  const [isPhase2ModalOpen, setIsPhase2ModalOpen] = useState(false);
 
   // Compute live KPIs
   const totalVolumeAggregated = campaigns.reduce((sum, c) => sum + c.reservedVolume, 0);
@@ -100,7 +102,16 @@ export const AdminDashboard: React.FC = () => {
             title="Banc d'Essai Concurrence, Atomicité & Server-Sent Events (Défi 1 - Phase 1)"
           >
             <Zap className="w-4 h-4 text-emerald-400" />
-            <span>Concurrence & SSE (Phase 1)</span>
+            <span>Concurrence (P1)</span>
+          </button>
+
+          <button
+            onClick={() => setIsPhase2ModalOpen(true)}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-teal-950/80 hover:bg-teal-900 border border-teal-600/70 text-teal-200 font-bold text-xs flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all hover:scale-105"
+            title="Séquestre ACPR & File Asynchrone de Traitement (Phase 2)"
+          >
+            <Lock className="w-4 h-4 text-teal-400" />
+            <span>Séquestre ACPR (P2)</span>
           </button>
 
           <button
@@ -651,6 +662,12 @@ export const AdminDashboard: React.FC = () => {
       <ConcurrencyWorkbenchModal
         isOpen={isConcurrencyModalOpen}
         onClose={() => setIsConcurrencyModalOpen(false)}
+      />
+
+      {/* Phase 2: Escrow ACPR & Queue Engine Workbench */}
+      <Phase2ExecutionWorkbenchModal
+        isOpen={isPhase2ModalOpen}
+        onClose={() => setIsPhase2ModalOpen(false)}
       />
 
     </div>

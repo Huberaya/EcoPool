@@ -417,3 +417,197 @@ export async function apiGetB2BSession(): Promise<any> {
   }
   return null;
 }
+
+// ==========================================
+// PHASE 2 : CLIENT API SÉQUESTRE & QUEUE ASYNCHRONE
+// ==========================================
+
+export async function apiGetEscrowLedger(): Promise<any> {
+  try {
+    const res = await fetch('/api/escrow/ledger');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get escrow ledger failed:', err);
+  }
+  return null;
+}
+
+export async function apiProcessBankReconciliation(params: {
+  orderId: string;
+  amountEur: number;
+  senderIban?: string;
+  senderName?: string;
+  bankReference?: string;
+}): Promise<any> {
+  try {
+    const res = await fetch('/api/escrow/reconcile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Process bank reconciliation failed:', err);
+  }
+  return null;
+}
+
+export async function apiReleaseEscrowMilestone(params: {
+  orderId: string;
+  milestoneStage: 1 | 2 | 3;
+  authorizedBy?: string;
+  notes?: string;
+}): Promise<any> {
+  try {
+    const res = await fetch('/api/escrow/milestone/release', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Release escrow milestone failed:', err);
+  }
+  return null;
+}
+
+export async function apiFreezeEscrowDispute(params: {
+  orderId: string;
+  reason: string;
+  reportedBy?: string;
+  claimAmountEur?: number;
+}): Promise<any> {
+  try {
+    const res = await fetch('/api/escrow/freeze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Freeze escrow dispute failed:', err);
+  }
+  return null;
+}
+
+export async function apiResolveEscrowDispute(params: {
+  orderId: string;
+  resolution: 'refund_buyer_full' | 'refund_partial_proceed' | 'dismiss_dispute_release';
+  terms?: { refundPct: number; notes: string; resolvedBy: string };
+}): Promise<any> {
+  try {
+    const res = await fetch('/api/escrow/dispute/resolve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Resolve escrow dispute failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetQueueMetrics(): Promise<any> {
+  try {
+    const res = await fetch('/api/queue/metrics');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get queue metrics failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetQueueJobs(limit: number = 50): Promise<any> {
+  try {
+    const res = await fetch(`/api/queue/jobs?limit=${limit}`);
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get queue jobs failed:', err);
+  }
+  return null;
+}
+
+export async function apiEnqueueJob(params: {
+  type: string;
+  title: string;
+  payload: any;
+  priority?: string;
+}): Promise<any> {
+  try {
+    const res = await fetch('/api/queue/enqueue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Enqueue job failed:', err);
+  }
+  return null;
+}
+
+export async function apiProcessNextJob(): Promise<any> {
+  try {
+    const res = await fetch('/api/queue/process-next', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Process next job failed:', err);
+  }
+  return null;
+}
+
+export async function apiProcessAllJobs(): Promise<any> {
+  try {
+    const res = await fetch('/api/queue/process-all', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Process all jobs failed:', err);
+  }
+  return null;
+}
+
+export async function apiClearQueueJobs(): Promise<any> {
+  try {
+    const res = await fetch('/api/queue/clear', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Clear queue jobs failed:', err);
+  }
+  return null;
+}
+
+export async function apiRunPhase2ValidationSuite(): Promise<any> {
+  try {
+    const res = await fetch('/api/phase2/validate-suite', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Run Phase 2 validation suite failed:', err);
+  }
+  return null;
+}
+

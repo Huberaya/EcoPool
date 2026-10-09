@@ -18,6 +18,7 @@ import { AuditReportModal } from './components/AuditReportModal';
 import { PersistenceHubModal } from './components/PersistenceHubModal';
 import { ScenarioValidationModal } from './components/ScenarioValidationModal';
 import { ConcurrencyWorkbenchModal } from './components/ConcurrencyWorkbenchModal';
+import { Phase2ExecutionWorkbenchModal } from './components/Phase2ExecutionWorkbenchModal';
 import { Campaign, ICPSector } from './types';
 import { 
   Sparkles, 
@@ -45,6 +46,7 @@ function EcoPoolAppContent() {
   const [isPersistenceModalOpen, setIsPersistenceModalOpen] = useState<boolean>(false);
   const [isValidationModalOpen, setIsValidationModalOpen] = useState<boolean>(false);
   const [isConcurrencyModalOpen, setIsConcurrencyModalOpen] = useState<boolean>(false);
+  const [isPhase2ModalOpen, setIsPhase2ModalOpen] = useState<boolean>(false);
 
   // Filters for Campaigns
   const [filterSector, setFilterSector] = useState<string>('all');
@@ -79,6 +81,7 @@ function EcoPoolAppContent() {
         onOpenPersistence={() => setIsPersistenceModalOpen(true)}
         onOpenValidation={() => setIsValidationModalOpen(true)}
         onOpenConcurrency={() => setIsConcurrencyModalOpen(true)}
+        onOpenPhase2={() => setIsPhase2ModalOpen(true)}
       />
 
       {/* Main View Container */}
@@ -326,6 +329,12 @@ function EcoPoolAppContent() {
         onClose={() => setIsConcurrencyModalOpen(false)}
       />
 
+      {/* Phase 2: Escrow ACPR & Queue Engine Industrial Workbench */}
+      <Phase2ExecutionWorkbenchModal
+        isOpen={isPhase2ModalOpen}
+        onClose={() => setIsPhase2ModalOpen(false)}
+      />
+
       {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 py-8 px-4 text-xs text-slate-400 mt-16">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -346,6 +355,13 @@ function EcoPoolAppContent() {
             >
               <Zap className="w-3.5 h-3.5" />
               Concurrence & SSE (Phase 1)
+            </button>
+            <button 
+              onClick={() => setIsPhase2ModalOpen(true)}
+              className="text-teal-400 hover:text-teal-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Séquestre ACPR & Queue (Phase 2)
             </button>
             <button 
               onClick={() => setIsValidationModalOpen(true)}

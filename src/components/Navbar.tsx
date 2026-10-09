@@ -33,6 +33,7 @@ interface NavbarProps {
   onOpenPersistence?: () => void;
   onOpenValidation?: () => void;
   onOpenConcurrency?: () => void;
+  onOpenPhase2?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -42,7 +43,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAudit,
   onOpenPersistence,
   onOpenValidation,
-  onOpenConcurrency
+  onOpenConcurrency,
+  onOpenPhase2
 }) => {
   const { 
     userRole, 
@@ -93,6 +95,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Zap className="w-3 h-3 text-amber-400" />
             Concurrence & SSE (Phase 1)
+          </button>
+          <span>•</span>
+          <button 
+            onClick={onOpenPhase2}
+            className="text-teal-300 hover:text-teal-200 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+          >
+            <Lock className="w-3 h-3 text-teal-400" />
+            Séquestre & Queue (Phase 2)
           </button>
           <span>•</span>
           <button 
@@ -304,6 +314,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className={`w-2 h-2 rounded-full ${
                 sseStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : sseStatus === 'connecting' ? 'bg-amber-400' : 'bg-rose-400'
               }`} />
+            </button>
+
+            {/* Phase 2: Escrow ACPR & Queue Engine Workbench */}
+            <button
+              onClick={onOpenPhase2}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-950/70 hover:bg-teal-900/80 text-teal-200 border border-teal-600/70 font-semibold text-xs shadow transition-all cursor-pointer hover:border-teal-400"
+              title="Centre de Contrôle Séquestre ACPR & File Asynchrone (Phase 2)"
+            >
+              <Lock className="w-3.5 h-3.5 text-teal-400" />
+              <span className="hidden sm:inline">Séquestre & Queue</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-teal-500/30 text-teal-300 text-[10px] font-bold">
+                Phase 2
+              </span>
             </button>
 
             {/* Test Scenarios & Validation (Option C) */}

@@ -1652,7 +1652,7 @@
       "ecopoolFee": 5.33,
       "logisticsFee": 4,
       "totalTTC": 109.6,
-      "escrowStatus": "paiement_securise",
+      "escrowStatus": "bloque_litige",
       "paymentMethod": "prelevement_sepa_b2b",
       "reservedAt": "2026-10-09 16:52",
       "hubTrackingNumber": "HUB-NRM-2026-6217",
@@ -1694,7 +1694,8 @@
           "waterSavedLiters": 12,
           "treeEquivalent": 1
         }
-      }
+      },
+      "notes": "\n[2026-10-09] Virement SEPA confirmé (2500 €) - Ref: SEPA-VAL-1791565527004\n[2026-10-09 LITIGE GELÉ] Vérification de tolérance dimensionnelle sur le col 24/410 (Signalé par: Contrôle Qualité Hub)"
     },
     {
       "id": "ord-099374",
@@ -2174,6 +2175,30 @@
   },
   "notifications": [
     {
+      "id": "notif-1791565527012",
+      "title": "Gel Conservatoire Séquestre Activé",
+      "message": "Les fonds de la commande #ord-099428 (109.6 €) ont été gelés suite à un signalement de litige.",
+      "type": "warning",
+      "timestamp": "2026-10-09T17:05:27.012Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791565527011",
+      "title": "Jalon 1 Séquestre Libéré",
+      "message": "Jalon 1 (Acompte 30% lancement usine) débloqué pour la commande #ord-099428. 24.60 € transférés à l'industriel.",
+      "type": "info",
+      "timestamp": "2026-10-09T17:05:27.011Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791565527010",
+      "title": "Virement Séquestre Réconcilié & Cantonné",
+      "message": "Le virement de 2,500 € pour la commande #ord-099428 a été réconcilié. Fonds cantonnés sous séquestre ACPR.",
+      "type": "success",
+      "timestamp": "2026-10-09T17:05:27.004Z",
+      "read": false
+    },
+    {
       "id": "notif-1791564720994-509",
       "title": "Réservation B2B Atomique Validée",
       "message": "Commande ord-099428 (100 unités) enregistrée et cantonnée sur l'Escrow EcoPool.",
@@ -2238,5 +2263,5 @@
       "read": false
     }
   ],
-  "lastUpdated": "2026-10-09T16:52:00.994Z"
+  "lastUpdated": "2026-10-09T17:05:27.012Z"
 }

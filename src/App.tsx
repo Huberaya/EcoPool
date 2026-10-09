@@ -19,6 +19,8 @@ import { PersistenceHubModal } from './components/PersistenceHubModal';
 import { ScenarioValidationModal } from './components/ScenarioValidationModal';
 import { ConcurrencyWorkbenchModal } from './components/ConcurrencyWorkbenchModal';
 import { Phase2ExecutionWorkbenchModal } from './components/Phase2ExecutionWorkbenchModal';
+import { Phase3ExecutionWorkbenchModal } from './components/Phase3ExecutionWorkbenchModal';
+import { Phase4ExecutionWorkbenchModal } from './components/Phase4ExecutionWorkbenchModal';
 import { Campaign, ICPSector } from './types';
 import { 
   Sparkles, 
@@ -33,7 +35,9 @@ import {
   Building2,
   Package,
   Database,
-  FlaskConical
+  FlaskConical,
+  FileCheck2,
+  Truck
 } from 'lucide-react';
 
 function EcoPoolAppContent() {
@@ -47,6 +51,8 @@ function EcoPoolAppContent() {
   const [isValidationModalOpen, setIsValidationModalOpen] = useState<boolean>(false);
   const [isConcurrencyModalOpen, setIsConcurrencyModalOpen] = useState<boolean>(false);
   const [isPhase2ModalOpen, setIsPhase2ModalOpen] = useState<boolean>(false);
+  const [isPhase3ModalOpen, setIsPhase3ModalOpen] = useState<boolean>(false);
+  const [isPhase4ModalOpen, setIsPhase4ModalOpen] = useState<boolean>(false);
 
   // Filters for Campaigns
   const [filterSector, setFilterSector] = useState<string>('all');
@@ -82,6 +88,8 @@ function EcoPoolAppContent() {
         onOpenValidation={() => setIsValidationModalOpen(true)}
         onOpenConcurrency={() => setIsConcurrencyModalOpen(true)}
         onOpenPhase2={() => setIsPhase2ModalOpen(true)}
+        onOpenPhase3={() => setIsPhase3ModalOpen(true)}
+        onOpenPhase4={() => setIsPhase4ModalOpen(true)}
       />
 
       {/* Main View Container */}
@@ -335,6 +343,18 @@ function EcoPoolAppContent() {
         onClose={() => setIsPhase2ModalOpen(false)}
       />
 
+      {/* Phase 3: Factur-X 2026 & CSRD ESG Cryptographic Audit Workbench */}
+      <Phase3ExecutionWorkbenchModal
+        isOpen={isPhase3ModalOpen}
+        onClose={() => setIsPhase3ModalOpen(false)}
+      />
+
+      {/* Phase 4: Hub Logistique 3-Tiers, DPP ESPR & Bourse Circulaire */}
+      <Phase4ExecutionWorkbenchModal
+        isOpen={isPhase4ModalOpen}
+        onClose={() => setIsPhase4ModalOpen(false)}
+      />
+
       {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 py-8 px-4 text-xs text-slate-400 mt-16">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -362,6 +382,20 @@ function EcoPoolAppContent() {
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               Séquestre ACPR & Queue (Phase 2)
+            </button>
+            <button 
+              onClick={() => setIsPhase3ModalOpen(true)}
+              className="text-sky-400 hover:text-sky-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <FileCheck2 className="w-3.5 h-3.5" />
+              Factur-X & CSRD (Phase 3)
+            </button>
+            <button 
+              onClick={() => setIsPhase4ModalOpen(true)}
+              className="text-purple-400 hover:text-purple-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <Truck className="w-3.5 h-3.5" />
+              Hub 3-Tiers & DPP (Phase 4)
             </button>
             <button 
               onClick={() => setIsValidationModalOpen(true)}

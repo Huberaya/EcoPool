@@ -19,7 +19,9 @@ import { OfficialDocumentModal } from './OfficialDocumentModal';
 import { ScenarioValidationModal } from './ScenarioValidationModal';
 import { ConcurrencyWorkbenchModal } from './ConcurrencyWorkbenchModal';
 import { Phase2ExecutionWorkbenchModal } from './Phase2ExecutionWorkbenchModal';
-import { FlaskConical, BadgeCheck, Zap, Lock } from 'lucide-react';
+import { Phase3ExecutionWorkbenchModal } from './Phase3ExecutionWorkbenchModal';
+import { Phase4ExecutionWorkbenchModal } from './Phase4ExecutionWorkbenchModal';
+import { FlaskConical, BadgeCheck, Zap, Lock, FileCheck2, Truck } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { 
@@ -42,6 +44,8 @@ export const AdminDashboard: React.FC = () => {
   const [isValidationModalOpen, setIsValidationModalOpen] = useState(false);
   const [isConcurrencyModalOpen, setIsConcurrencyModalOpen] = useState(false);
   const [isPhase2ModalOpen, setIsPhase2ModalOpen] = useState(false);
+  const [isPhase3ModalOpen, setIsPhase3ModalOpen] = useState(false);
+  const [isPhase4ModalOpen, setIsPhase4ModalOpen] = useState(false);
 
   // Compute live KPIs
   const totalVolumeAggregated = campaigns.reduce((sum, c) => sum + c.reservedVolume, 0);
@@ -111,7 +115,25 @@ export const AdminDashboard: React.FC = () => {
             title="Séquestre ACPR & File Asynchrone de Traitement (Phase 2)"
           >
             <Lock className="w-4 h-4 text-teal-400" />
-            <span>Séquestre ACPR (P2)</span>
+            <span>Séquestre (P2)</span>
+          </button>
+
+          <button
+            onClick={() => setIsPhase3ModalOpen(true)}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-sky-950/80 hover:bg-sky-900 border border-sky-600/70 text-sky-200 font-bold text-xs flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all hover:scale-105"
+            title="Facturation Électronique 2026 Factur-X & Audit CSRD (Phase 3)"
+          >
+            <FileCheck2 className="w-4 h-4 text-sky-400" />
+            <span>Factur-X & CSRD (P3)</span>
+          </button>
+
+          <button
+            onClick={() => setIsPhase4ModalOpen(true)}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-purple-950/80 hover:bg-purple-900 border border-purple-600/70 text-purple-200 font-bold text-xs flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all hover:scale-105"
+            title="Hub Logistique 3-Tiers, DPP ESPR & Bourse Circulaire (Phase 4)"
+          >
+            <Truck className="w-4 h-4 text-purple-400" />
+            <span>Hub & DPP (P4)</span>
           </button>
 
           <button
@@ -668,6 +690,18 @@ export const AdminDashboard: React.FC = () => {
       <Phase2ExecutionWorkbenchModal
         isOpen={isPhase2ModalOpen}
         onClose={() => setIsPhase2ModalOpen(false)}
+      />
+
+      {/* Phase 3: Factur-X & CSRD Workbench */}
+      <Phase3ExecutionWorkbenchModal
+        isOpen={isPhase3ModalOpen}
+        onClose={() => setIsPhase3ModalOpen(false)}
+      />
+
+      {/* Phase 4: Hub Logistique 3-Tiers, DPP ESPR & Bourse Circulaire */}
+      <Phase4ExecutionWorkbenchModal
+        isOpen={isPhase4ModalOpen}
+        onClose={() => setIsPhase4ModalOpen(false)}
       />
 
     </div>

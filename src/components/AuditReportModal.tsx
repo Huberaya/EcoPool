@@ -194,6 +194,46 @@ export const AuditReportModal: React.FC<AuditReportModalProps> = ({ isOpen, onCl
               🎯 Objectif opérationnel validé : 10 marques partenaires et seuil de 50 000 unités agrégées.
             </div>
           </div>
+
+          {/* Section K: Exécution des 4 Grandes Phases Industrielles EcoPool */}
+          <div className="space-y-3 bg-slate-950/50 border border-purple-800/40 rounded-xl p-4">
+            <h3 className="text-sm font-bold text-purple-300 flex items-center gap-2">
+              <span className="text-purple-400 font-mono">K.</span> Certification Complète des 4 Grandes Phases d'Ingénierie EcoPool
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 rounded-lg bg-slate-900 border border-amber-500/30 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-amber-300">Phase 1 : Concurrence & Temps Réel</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Validée (8/8)</span>
+                </div>
+                <p className="text-slate-400 text-[11px]">Verrous Two-Phase Lock (2PL), résolution des race conditions sur les paliers dégressifs et diffusion SSE événementielle.</p>
+              </div>
+
+              <div className="p-3 rounded-lg bg-slate-900 border border-teal-500/30 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-teal-300">Phase 2 : Séquestre ACPR & Queue</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Validée (8/8)</span>
+                </div>
+                <p className="text-slate-400 text-[11px]">Comptes de cantonnement ACPR, réconciliation automatisée des virements SEPA, jalons 30/50/20%, gel litiges & worker asynchrone.</p>
+              </div>
+
+              <div className="p-3 rounded-lg bg-slate-900 border border-sky-500/30 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sky-300">Phase 3 : Factur-X 2026 & CSRD</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Validée (8/8)</span>
+                </div>
+                <p className="text-slate-400 text-[11px]">Facturation électronique norme EN16931, connecteurs PDP / Chorus Pro, machine d'état DGFIP et registre blockchain CSRD ESRS E1/E5.</p>
+              </div>
+
+              <div className="p-3 rounded-lg bg-slate-900 border border-purple-500/30 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-purple-300">Phase 4 : Hub 3-Tiers, DPP & Re-Pooling</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Validée (8/8)</span>
+                </div>
+                <p className="text-slate-400 text-[11px]">Cross-docking Le Havre/Fos, traçabilité SSCC GS1-128, labo qualité 4-points, e-CMR ONU, Passeport Numérique DPP ESPR & Bourse circulaire.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}

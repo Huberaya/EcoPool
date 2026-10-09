@@ -1657,7 +1657,7 @@
       "reservedAt": "2026-10-09 16:52",
       "hubTrackingNumber": "HUB-NRM-2026-6217",
       "finalTrackingNumber": "ECO-EXP-75781",
-      "logisticsStep": "reception_hub",
+      "logisticsStep": "expedie",
       "contract": {
         "contractNumber": "CTR-2026-EP-099428",
         "poNumber": "PO-2026-EP-099428",
@@ -1695,7 +1695,7 @@
           "treeEquivalent": 1
         }
       },
-      "notes": "\n[2026-10-09] Virement SEPA confirmé (2500 €) - Ref: SEPA-VAL-1791565527004\n[2026-10-09 LITIGE GELÉ] Vérification de tolérance dimensionnelle sur le col 24/410 (Signalé par: Contrôle Qualité Hub)"
+      "notes": "\n[2026-10-09] Virement SEPA confirmé (2500 €) - Ref: SEPA-VAL-1791565527004\n[2026-10-09 LITIGE GELÉ] Vérification de tolérance dimensionnelle sur le col 24/410 (Signalé par: Contrôle Qualité Hub)\n[2026-10-09] Virement SEPA confirmé (2500 €) - Ref: SEPA-VAL-1791567519451\n[2026-10-09 LITIGE GELÉ] Vérification de tolérance dimensionnelle sur le col 24/410 (Signalé par: Contrôle Qualité Hub)"
     },
     {
       "id": "ord-099374",
@@ -2175,6 +2175,62 @@
   },
   "notifications": [
     {
+      "id": "notif-1791567519603",
+      "title": "Factur-X Acheminée sur PDP / Chorus Pro",
+      "message": "La facture FX-2026-09942 a été déposée et validée par le PPF/PDP (PDP Docaposte / Chorus Pro Connect). Accusé de réception officiel : AR-PDP-CHORUS-2026-67519603.",
+      "type": "success",
+      "timestamp": "2026-10-09T17:38:39.603Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791567519459",
+      "title": "Gel Conservatoire Séquestre Activé",
+      "message": "Les fonds de la commande #ord-099428 (109.6 €) ont été gelés suite à un signalement de litige.",
+      "type": "warning",
+      "timestamp": "2026-10-09T17:38:39.459Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791567519459",
+      "title": "Jalon 1 Séquestre Libéré",
+      "message": "Jalon 1 (Acompte 30% lancement usine) débloqué pour la commande #ord-099428. 24.60 € transférés à l'industriel.",
+      "type": "info",
+      "timestamp": "2026-10-09T17:38:39.459Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791567519458",
+      "title": "Virement Séquestre Réconcilié & Cantonné",
+      "message": "Le virement de 2,500 € pour la commande #ord-099428 a été réconcilié. Fonds cantonnés sous séquestre ACPR.",
+      "type": "success",
+      "timestamp": "2026-10-09T17:38:39.451Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791567515642",
+      "title": "Rachat de Reliquat Circulaire Effectué",
+      "message": "Achat de 200 unités de Flacons 250ml PEHD 100% PCR (Col 24/410) pour Laboratoires Botanica France SAS. Séquestre alloué avec économie de 28%.",
+      "type": "success",
+      "timestamp": "2026-10-09T17:38:35.642Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791567491751",
+      "title": "Rachat de Reliquat Circulaire Effectué",
+      "message": "Achat de 200 unités de Flacons 250ml PEHD 100% PCR (Col 24/410) pour Laboratoires Botanica France SAS. Séquestre alloué avec économie de 28%.",
+      "type": "success",
+      "timestamp": "2026-10-09T17:38:11.751Z",
+      "read": false
+    },
+    {
+      "id": "notif-1791566871355",
+      "title": "Factur-X Acheminée sur PDP / Chorus Pro",
+      "message": "La facture FX-2026-09942 a été déposée et validée par le PPF/PDP (PDP Docaposte / Chorus Pro Connect). Accusé de réception officiel : AR-PDP-CHORUS-2026-66871355.",
+      "type": "success",
+      "timestamp": "2026-10-09T17:27:51.355Z",
+      "read": false
+    },
+    {
       "id": "notif-1791565527012",
       "title": "Gel Conservatoire Séquestre Activé",
       "message": "Les fonds de la commande #ord-099428 (109.6 €) ont été gelés suite à un signalement de litige.",
@@ -2263,5 +2319,5 @@
       "read": false
     }
   ],
-  "lastUpdated": "2026-10-09T17:05:27.012Z"
+  "lastUpdated": "2026-10-09T17:38:39.603Z"
 }

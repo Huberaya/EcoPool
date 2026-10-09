@@ -611,3 +611,307 @@ export async function apiRunPhase2ValidationSuite(): Promise<any> {
   return null;
 }
 
+// ==========================================
+// PHASE 3 : CLIENT API FACTUR-X & CONFORMITÉ CSRD / ESG
+// ==========================================
+
+export async function apiGetFacturXInvoices(): Promise<any> {
+  try {
+    const res = await fetch('/api/facturx/invoices');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get Factur-X invoices failed:', err);
+  }
+  return null;
+}
+
+export async function apiGenerateFacturX(orderId: string): Promise<any> {
+  try {
+    const res = await fetch(`/api/facturx/generate/${orderId}`, { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Generate Factur-X failed:', err);
+  }
+  return null;
+}
+
+export async function apiTransmitInvoiceToPdp(invoiceId: string, pdpName?: string): Promise<any> {
+  try {
+    const res = await fetch('/api/facturx/pdp/transmit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ invoiceId, pdpName })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Transmit invoice to PDP failed:', err);
+  }
+  return null;
+}
+
+export async function apiUpdateInvoiceLifecycle(invoiceId: string, newStatus: string): Promise<any> {
+  try {
+    const res = await fetch('/api/facturx/status/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ invoiceId, newStatus })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Update invoice status failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetCsrdRegistry(): Promise<any> {
+  try {
+    const res = await fetch('/api/csrd/registry');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get CSRD registry failed:', err);
+  }
+  return null;
+}
+
+export async function apiCertifyCsrdOrder(orderId: string): Promise<any> {
+  try {
+    const res = await fetch(`/api/csrd/certify/${orderId}`, { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Certify CSRD order failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetConsolidatedEsrsReport(): Promise<any> {
+  try {
+    const res = await fetch('/api/csrd/esrs-summary');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get ESRS summary failed:', err);
+  }
+  return null;
+}
+
+export async function apiVerifyCsrdChain(): Promise<any> {
+  try {
+    const res = await fetch('/api/csrd/verify-chain', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Verify CSRD chain failed:', err);
+  }
+  return null;
+}
+
+export async function apiRunPhase3ValidationSuite(): Promise<any> {
+  try {
+    const res = await fetch('/api/phase3/validate-suite', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Run Phase 3 validation suite failed:', err);
+  }
+  return null;
+}
+
+// ==========================================
+// PHASE 4 : CLIENT API HUB 3-TIERS, DPP & BOURSE CIRCULAIRE
+// ==========================================
+
+export async function apiGetHubParcels(): Promise<any> {
+  try {
+    const res = await fetch('/api/logistics/hub/parcels');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get hub parcels failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetHubParcel(id: string): Promise<any> {
+  try {
+    const res = await fetch(`/api/logistics/hub/parcels/${id}`);
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get hub parcel failed:', err);
+  }
+  return null;
+}
+
+export async function apiPerformHubQualityInspection(
+  orderId: string,
+  inspectorName?: string,
+  notes?: string
+): Promise<any> {
+  try {
+    const res = await fetch('/api/logistics/hub/inspect-qa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, inspectorName, notes })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] QA inspection failed:', err);
+  }
+  return null;
+}
+
+export async function apiDispatchCmr(
+  orderId: string,
+  carrierName?: string
+): Promise<any> {
+  try {
+    const res = await fetch('/api/logistics/hub/dispatch-cmr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, carrierName })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Dispatch CMR failed:', err);
+  }
+  return null;
+}
+
+export async function apiUpdateParcelStatus(
+  orderId: string,
+  newStatus: string
+): Promise<any> {
+  try {
+    const res = await fetch('/api/logistics/hub/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, newStatus })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Update parcel status failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetHubMetrics(): Promise<any> {
+  try {
+    const res = await fetch('/api/logistics/hub/metrics');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get hub metrics failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetDigitalProductPassport(orderId: string): Promise<any> {
+  try {
+    const res = await fetch(`/api/logistics/dpp/${orderId}`);
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get DPP failed:', err);
+  }
+  return null;
+}
+
+export async function apiSealDigitalProductPassport(orderId: string): Promise<any> {
+  try {
+    const res = await fetch(`/api/logistics/dpp/seal/${orderId}`, { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Seal DPP failed:', err);
+  }
+  return null;
+}
+
+export async function apiGetCircularSurplusListings(): Promise<any> {
+  try {
+    const res = await fetch('/api/circular-market/listings');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Get circular surplus failed:', err);
+  }
+  return null;
+}
+
+export async function apiPostCircularSurplusListing(listingData: any): Promise<any> {
+  try {
+    const res = await fetch('/api/circular-market/post-surplus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(listingData)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Post surplus failed:', err);
+  }
+  return null;
+}
+
+export async function apiBuyCircularSurplus(
+  listingId: string,
+  buyerCompanyName?: string,
+  quantity?: number
+): Promise<any> {
+  try {
+    const res = await fetch('/api/circular-market/buy-surplus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ listingId, buyerCompanyName, quantity })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Buy surplus failed:', err);
+  }
+  return null;
+}
+
+export async function apiRunPhase4ValidationSuite(): Promise<any> {
+  try {
+    const res = await fetch('/api/phase4/validate-suite', { method: 'POST' });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[EcoPool API] Run Phase 4 validation suite failed:', err);
+  }
+  return null;
+}
+
+
+

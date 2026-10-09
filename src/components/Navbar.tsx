@@ -22,7 +22,8 @@ import {
   FlaskConical,
   BadgeCheck,
   Zap,
-  Radio
+  Radio,
+  FileCheck2
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -34,6 +35,8 @@ interface NavbarProps {
   onOpenValidation?: () => void;
   onOpenConcurrency?: () => void;
   onOpenPhase2?: () => void;
+  onOpenPhase3?: () => void;
+  onOpenPhase4?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -44,7 +47,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenPersistence,
   onOpenValidation,
   onOpenConcurrency,
-  onOpenPhase2
+  onOpenPhase2,
+  onOpenPhase3,
+  onOpenPhase4
 }) => {
   const { 
     userRole, 
@@ -103,6 +108,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Lock className="w-3 h-3 text-teal-400" />
             Séquestre & Queue (Phase 2)
+          </button>
+          <span>•</span>
+          <button 
+            onClick={onOpenPhase3}
+            className="text-sky-300 hover:text-sky-200 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+          >
+            <FileText className="w-3 h-3 text-sky-400" />
+            Factur-X & CSRD (Phase 3)
+          </button>
+          <span>•</span>
+          <button 
+            onClick={onOpenPhase4}
+            className="text-purple-300 hover:text-purple-200 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+          >
+            <Truck className="w-3 h-3 text-purple-400" />
+            Hub & DPP (Phase 4)
           </button>
           <span>•</span>
           <button 
@@ -326,6 +347,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden sm:inline">Séquestre & Queue</span>
               <span className="px-1.5 py-0.2 rounded-full bg-teal-500/30 text-teal-300 text-[10px] font-bold">
                 Phase 2
+              </span>
+            </button>
+
+            {/* Phase 3: Factur-X & CSRD Cryptographic Audit Workbench */}
+            <button
+              onClick={onOpenPhase3}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-950/70 hover:bg-sky-900/80 text-sky-200 border border-sky-600/70 font-semibold text-xs shadow transition-all cursor-pointer hover:border-sky-400"
+              title="Facturation Électronique Factur-X 2026 & Audit ESG / CSRD (Phase 3)"
+            >
+              <FileCheck2 className="w-3.5 h-3.5 text-sky-400" />
+              <span className="hidden sm:inline">Factur-X & CSRD</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-sky-500/30 text-sky-300 text-[10px] font-bold">
+                Phase 3
+              </span>
+            </button>
+
+            {/* Phase 4: Hub Logistique 3-Tiers, DPP ESPR & Bourse Circulaire */}
+            <button
+              onClick={onOpenPhase4}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-950/70 hover:bg-purple-900/80 text-purple-200 border border-purple-600/70 font-semibold text-xs shadow transition-all cursor-pointer hover:border-purple-400"
+              title="Hub Logistique 3-Tiers, Traçabilité SSCC, DPP ESPR & Bourse Circulaire (Phase 4)"
+            >
+              <Truck className="w-3.5 h-3.5 text-purple-400" />
+              <span className="hidden sm:inline">Hub & DPP</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-purple-500/30 text-purple-300 text-[10px] font-bold">
+                Phase 4
               </span>
             </button>
 

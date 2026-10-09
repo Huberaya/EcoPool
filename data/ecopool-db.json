@@ -74,8 +74,8 @@
       "moq": 50000,
       "targetVolume": 60000,
       "maxVolume": 90000,
-      "reservedVolume": 42500,
-      "participantsCount": 4,
+      "reservedVolume": 43000,
+      "participantsCount": 9,
       "currentUnitPrice": 0.82,
       "marketSoloPrice": 1.38,
       "priceTiers": [
@@ -138,6 +138,71 @@
       "ecopoolFeePct": 6.5,
       "participants": [
         {
+          "id": "part-1791564720994-730",
+          "buyerId": "stress-buyer-5",
+          "buyerName": "Responsable Achats #5",
+          "companyName": "Acheteur Test Concurrence #5 SAS",
+          "sector": "cosmetique_naturelle",
+          "quantity": 100,
+          "unitPricePaid": 0.82,
+          "totalAmount": 109.6,
+          "reservedAt": "2026-10-09",
+          "escrowStatus": "secured_in_escrow",
+          "deliveryStatus": "en_attente"
+        },
+        {
+          "id": "part-1791564720993-993",
+          "buyerId": "stress-buyer-4",
+          "buyerName": "Responsable Achats #4",
+          "companyName": "Acheteur Test Concurrence #4 SAS",
+          "sector": "cosmetique_naturelle",
+          "quantity": 100,
+          "unitPricePaid": 0.82,
+          "totalAmount": 98.4,
+          "reservedAt": "2026-10-09",
+          "escrowStatus": "secured_in_escrow",
+          "deliveryStatus": "en_attente"
+        },
+        {
+          "id": "part-1791564720991-455",
+          "buyerId": "stress-buyer-3",
+          "buyerName": "Responsable Achats #3",
+          "companyName": "Acheteur Test Concurrence #3 SAS",
+          "sector": "cosmetique_naturelle",
+          "quantity": 100,
+          "unitPricePaid": 0.82,
+          "totalAmount": 98.4,
+          "reservedAt": "2026-10-09",
+          "escrowStatus": "secured_in_escrow",
+          "deliveryStatus": "en_attente"
+        },
+        {
+          "id": "part-1791564720989-236",
+          "buyerId": "stress-buyer-2",
+          "buyerName": "Responsable Achats #2",
+          "companyName": "Acheteur Test Concurrence #2 SAS",
+          "sector": "cosmetique_naturelle",
+          "quantity": 100,
+          "unitPricePaid": 0.82,
+          "totalAmount": 98.4,
+          "reservedAt": "2026-10-09",
+          "escrowStatus": "secured_in_escrow",
+          "deliveryStatus": "en_attente"
+        },
+        {
+          "id": "part-1791564720910-532",
+          "buyerId": "stress-buyer-1",
+          "buyerName": "Responsable Achats #1",
+          "companyName": "Acheteur Test Concurrence #1 SAS",
+          "sector": "cosmetique_naturelle",
+          "quantity": 100,
+          "unitPricePaid": 0.82,
+          "totalAmount": 98.4,
+          "reservedAt": "2026-10-09",
+          "escrowStatus": "secured_in_escrow",
+          "deliveryStatus": "en_attente"
+        },
+        {
           "id": "part-01",
           "buyerId": "buyer-01",
           "buyerName": "Clémence Vasseur",
@@ -145,7 +210,7 @@
           "sector": "cosmetique_naturelle",
           "quantity": 15000,
           "unitPricePaid": 0.82,
-          "totalAmount": 12300,
+          "totalAmount": 14760,
           "reservedAt": "2026-09-12",
           "escrowStatus": "secured_in_escrow",
           "deliveryStatus": "en_attente"
@@ -158,7 +223,7 @@
           "sector": "cosmetique_naturelle",
           "quantity": 12000,
           "unitPricePaid": 0.82,
-          "totalAmount": 9840,
+          "totalAmount": 11808,
           "reservedAt": "2026-09-14",
           "escrowStatus": "secured_in_escrow",
           "deliveryStatus": "en_attente"
@@ -171,7 +236,7 @@
           "sector": "dnvb",
           "quantity": 10000,
           "unitPricePaid": 0.82,
-          "totalAmount": 8200,
+          "totalAmount": 9840,
           "reservedAt": "2026-09-18",
           "escrowStatus": "secured_in_escrow",
           "deliveryStatus": "en_attente"
@@ -184,7 +249,7 @@
           "sector": "cosmetique_naturelle",
           "quantity": 5500,
           "unitPricePaid": 0.82,
-          "totalAmount": 4510,
+          "totalAmount": 5412,
           "reservedAt": "2026-09-21",
           "escrowStatus": "secured_in_escrow",
           "deliveryStatus": "en_attente"
@@ -1575,6 +1640,291 @@
   ],
   "orders": [
     {
+      "id": "ord-099428",
+      "campaignId": "camp-01",
+      "campaignTitle": "Flacon Cosmétique PCR 100% Recyclé — 250 ml",
+      "buyerId": "stress-buyer-5",
+      "companyName": "Acheteur Test Concurrence #5 SAS",
+      "productName": "Flacon Cylindre 250ml PCR 100%",
+      "quantity": 100,
+      "unitPrice": 0.82,
+      "goodsTotal": 82,
+      "ecopoolFee": 5.33,
+      "logisticsFee": 4,
+      "totalTTC": 109.6,
+      "escrowStatus": "paiement_securise",
+      "paymentMethod": "prelevement_sepa_b2b",
+      "reservedAt": "2026-10-09 16:52",
+      "hubTrackingNumber": "HUB-NRM-2026-6217",
+      "finalTrackingNumber": "ECO-EXP-75781",
+      "logisticsStep": "reception_hub",
+      "contract": {
+        "contractNumber": "CTR-2026-EP-099428",
+        "poNumber": "PO-2026-EP-099428",
+        "rseCertNumber": "RSE-2026-CSRD-4214",
+        "generatedDate": "2026-10-09",
+        "buyerSignature": {
+          "signed": false,
+          "signatoryName": "Responsable Achats #5",
+          "signatoryTitle": "Directrice Achats & RSE"
+        },
+        "supplierSignature": {
+          "signed": true,
+          "signatoryName": "Plastinnov Normandie - Direction Industrielle",
+          "signedAt": "2026-10-09 11:30 CET"
+        },
+        "ecopoolSignature": {
+          "signed": true,
+          "signatoryName": "Alexandre Roche (EcoPool SAS)",
+          "signedAt": "2026-10-09 10:00 CET",
+          "hashSha256": "bfe161a0543d730f5d24dae9dc8763ba3f308e3754e9c3c9214e225c5f90cee4"
+        },
+        "escrowMilestones": {
+          "stage1Pct": 30,
+          "stage1Released": true,
+          "stage2Pct": 50,
+          "stage2Released": false,
+          "stage3Pct": 20,
+          "stage3Released": false
+        },
+        "carbonMetrics": {
+          "co2AvoidedKg": 5,
+          "virginPlasticAvoidedKg": 2,
+          "recycledContentPct": 100,
+          "waterSavedLiters": 12,
+          "treeEquivalent": 1
+        }
+      }
+    },
+    {
+      "id": "ord-099374",
+      "campaignId": "camp-01",
+      "campaignTitle": "Flacon Cosmétique PCR 100% Recyclé — 250 ml",
+      "buyerId": "stress-buyer-4",
+      "companyName": "Acheteur Test Concurrence #4 SAS",
+      "productName": "Flacon Cylindre 250ml PCR 100%",
+      "quantity": 100,
+      "unitPrice": 0.82,
+      "goodsTotal": 82,
+      "ecopoolFee": 5.33,
+      "logisticsFee": 4,
+      "totalTTC": 109.6,
+      "escrowStatus": "paiement_securise",
+      "paymentMethod": "prelevement_sepa_b2b",
+      "reservedAt": "2026-10-09 16:52",
+      "hubTrackingNumber": "HUB-NRM-2026-1220",
+      "finalTrackingNumber": "ECO-EXP-35163",
+      "logisticsStep": "reception_hub",
+      "contract": {
+        "contractNumber": "CTR-2026-EP-099374",
+        "poNumber": "PO-2026-EP-099374",
+        "rseCertNumber": "RSE-2026-CSRD-5457",
+        "generatedDate": "2026-10-09",
+        "buyerSignature": {
+          "signed": false,
+          "signatoryName": "Responsable Achats #4",
+          "signatoryTitle": "Directrice Achats & RSE"
+        },
+        "supplierSignature": {
+          "signed": true,
+          "signatoryName": "Plastinnov Normandie - Direction Industrielle",
+          "signedAt": "2026-10-09 11:30 CET"
+        },
+        "ecopoolSignature": {
+          "signed": true,
+          "signatoryName": "Alexandre Roche (EcoPool SAS)",
+          "signedAt": "2026-10-09 10:00 CET",
+          "hashSha256": "0899b0ac77074f127f294088bc8dbfe4044c3b6736a5ecda3b915990ad6fb806"
+        },
+        "escrowMilestones": {
+          "stage1Pct": 30,
+          "stage1Released": true,
+          "stage2Pct": 50,
+          "stage2Released": false,
+          "stage3Pct": 20,
+          "stage3Released": false
+        },
+        "carbonMetrics": {
+          "co2AvoidedKg": 5,
+          "virginPlasticAvoidedKg": 2,
+          "recycledContentPct": 100,
+          "waterSavedLiters": 12,
+          "treeEquivalent": 1
+        }
+      }
+    },
+    {
+      "id": "ord-099120",
+      "campaignId": "camp-01",
+      "campaignTitle": "Flacon Cosmétique PCR 100% Recyclé — 250 ml",
+      "buyerId": "stress-buyer-3",
+      "companyName": "Acheteur Test Concurrence #3 SAS",
+      "productName": "Flacon Cylindre 250ml PCR 100%",
+      "quantity": 100,
+      "unitPrice": 0.82,
+      "goodsTotal": 82,
+      "ecopoolFee": 5.33,
+      "logisticsFee": 4,
+      "totalTTC": 109.6,
+      "escrowStatus": "paiement_securise",
+      "paymentMethod": "prelevement_sepa_b2b",
+      "reservedAt": "2026-10-09 16:52",
+      "hubTrackingNumber": "HUB-NRM-2026-3374",
+      "finalTrackingNumber": "ECO-EXP-95461",
+      "logisticsStep": "reception_hub",
+      "contract": {
+        "contractNumber": "CTR-2026-EP-099120",
+        "poNumber": "PO-2026-EP-099120",
+        "rseCertNumber": "RSE-2026-CSRD-9201",
+        "generatedDate": "2026-10-09",
+        "buyerSignature": {
+          "signed": false,
+          "signatoryName": "Responsable Achats #3",
+          "signatoryTitle": "Directrice Achats & RSE"
+        },
+        "supplierSignature": {
+          "signed": true,
+          "signatoryName": "Plastinnov Normandie - Direction Industrielle",
+          "signedAt": "2026-10-09 11:30 CET"
+        },
+        "ecopoolSignature": {
+          "signed": true,
+          "signatoryName": "Alexandre Roche (EcoPool SAS)",
+          "signedAt": "2026-10-09 10:00 CET",
+          "hashSha256": "eb4afc84cbf66329f242e35f1f11c1bc888ade37c93d2c2f91aca6b951dee6af"
+        },
+        "escrowMilestones": {
+          "stage1Pct": 30,
+          "stage1Released": true,
+          "stage2Pct": 50,
+          "stage2Released": false,
+          "stage3Pct": 20,
+          "stage3Released": false
+        },
+        "carbonMetrics": {
+          "co2AvoidedKg": 5,
+          "virginPlasticAvoidedKg": 2,
+          "recycledContentPct": 100,
+          "waterSavedLiters": 12,
+          "treeEquivalent": 1
+        }
+      }
+    },
+    {
+      "id": "ord-098977",
+      "campaignId": "camp-01",
+      "campaignTitle": "Flacon Cosmétique PCR 100% Recyclé — 250 ml",
+      "buyerId": "stress-buyer-2",
+      "companyName": "Acheteur Test Concurrence #2 SAS",
+      "productName": "Flacon Cylindre 250ml PCR 100%",
+      "quantity": 100,
+      "unitPrice": 0.82,
+      "goodsTotal": 82,
+      "ecopoolFee": 5.33,
+      "logisticsFee": 4,
+      "totalTTC": 109.6,
+      "escrowStatus": "paiement_securise",
+      "paymentMethod": "prelevement_sepa_b2b",
+      "reservedAt": "2026-10-09 16:52",
+      "hubTrackingNumber": "HUB-NRM-2026-3046",
+      "finalTrackingNumber": "ECO-EXP-84622",
+      "logisticsStep": "reception_hub",
+      "contract": {
+        "contractNumber": "CTR-2026-EP-098977",
+        "poNumber": "PO-2026-EP-098977",
+        "rseCertNumber": "RSE-2026-CSRD-4314",
+        "generatedDate": "2026-10-09",
+        "buyerSignature": {
+          "signed": false,
+          "signatoryName": "Responsable Achats #2",
+          "signatoryTitle": "Directrice Achats & RSE"
+        },
+        "supplierSignature": {
+          "signed": true,
+          "signatoryName": "Plastinnov Normandie - Direction Industrielle",
+          "signedAt": "2026-10-09 11:30 CET"
+        },
+        "ecopoolSignature": {
+          "signed": true,
+          "signatoryName": "Alexandre Roche (EcoPool SAS)",
+          "signedAt": "2026-10-09 10:00 CET",
+          "hashSha256": "063182de9b8b684d3760a9d58215bc0b4f10fde2df854730ff99bfd800408b31"
+        },
+        "escrowMilestones": {
+          "stage1Pct": 30,
+          "stage1Released": true,
+          "stage2Pct": 50,
+          "stage2Released": false,
+          "stage3Pct": 20,
+          "stage3Released": false
+        },
+        "carbonMetrics": {
+          "co2AvoidedKg": 5,
+          "virginPlasticAvoidedKg": 2,
+          "recycledContentPct": 100,
+          "waterSavedLiters": 12,
+          "treeEquivalent": 1
+        }
+      }
+    },
+    {
+      "id": "ord-091091",
+      "campaignId": "camp-01",
+      "campaignTitle": "Flacon Cosmétique PCR 100% Recyclé — 250 ml",
+      "buyerId": "stress-buyer-1",
+      "companyName": "Acheteur Test Concurrence #1 SAS",
+      "productName": "Flacon Cylindre 250ml PCR 100%",
+      "quantity": 100,
+      "unitPrice": 0.82,
+      "goodsTotal": 82,
+      "ecopoolFee": 5.33,
+      "logisticsFee": 4,
+      "totalTTC": 109.6,
+      "escrowStatus": "paiement_securise",
+      "paymentMethod": "prelevement_sepa_b2b",
+      "reservedAt": "2026-10-09 16:52",
+      "hubTrackingNumber": "HUB-NRM-2026-9620",
+      "finalTrackingNumber": "ECO-EXP-25458",
+      "logisticsStep": "reception_hub",
+      "contract": {
+        "contractNumber": "CTR-2026-EP-091091",
+        "poNumber": "PO-2026-EP-091091",
+        "rseCertNumber": "RSE-2026-CSRD-4355",
+        "generatedDate": "2026-10-09",
+        "buyerSignature": {
+          "signed": false,
+          "signatoryName": "Responsable Achats #1",
+          "signatoryTitle": "Directrice Achats & RSE"
+        },
+        "supplierSignature": {
+          "signed": true,
+          "signatoryName": "Plastinnov Normandie - Direction Industrielle",
+          "signedAt": "2026-10-09 11:30 CET"
+        },
+        "ecopoolSignature": {
+          "signed": true,
+          "signatoryName": "Alexandre Roche (EcoPool SAS)",
+          "signedAt": "2026-10-09 10:00 CET",
+          "hashSha256": "491dbf3704a20448972924634f49a28cfdd5c4f15a6bce315523ec0e7ea6c0a5"
+        },
+        "escrowMilestones": {
+          "stage1Pct": 30,
+          "stage1Released": true,
+          "stage2Pct": 50,
+          "stage2Released": false,
+          "stage3Pct": 20,
+          "stage3Released": false
+        },
+        "carbonMetrics": {
+          "co2AvoidedKg": 5,
+          "virginPlasticAvoidedKg": 2,
+          "recycledContentPct": 100,
+          "waterSavedLiters": 12,
+          "treeEquivalent": 1
+        }
+      }
+    },
+    {
       "id": "ord-881",
       "campaignId": "camp-01",
       "campaignTitle": "Flacon Cosmétique PCR 100% Recyclé — 250 ml",
@@ -1824,6 +2174,46 @@
   },
   "notifications": [
     {
+      "id": "notif-1791564720994-509",
+      "title": "Réservation B2B Atomique Validée",
+      "message": "Commande ord-099428 (100 unités) enregistrée et cantonnée sur l'Escrow EcoPool.",
+      "type": "success",
+      "timestamp": "À l’instant",
+      "read": false
+    },
+    {
+      "id": "notif-1791564720993-751",
+      "title": "Réservation B2B Atomique Validée",
+      "message": "Commande ord-099374 (100 unités) enregistrée et cantonnée sur l'Escrow EcoPool.",
+      "type": "success",
+      "timestamp": "À l’instant",
+      "read": false
+    },
+    {
+      "id": "notif-1791564720991-150",
+      "title": "Réservation B2B Atomique Validée",
+      "message": "Commande ord-099120 (100 unités) enregistrée et cantonnée sur l'Escrow EcoPool.",
+      "type": "success",
+      "timestamp": "À l’instant",
+      "read": false
+    },
+    {
+      "id": "notif-1791564720989-395",
+      "title": "Réservation B2B Atomique Validée",
+      "message": "Commande ord-098977 (100 unités) enregistrée et cantonnée sur l'Escrow EcoPool.",
+      "type": "success",
+      "timestamp": "À l’instant",
+      "read": false
+    },
+    {
+      "id": "notif-1791564720910-831",
+      "title": "Réservation B2B Atomique Validée",
+      "message": "Commande ord-091091 (100 unités) enregistrée et cantonnée sur l'Escrow EcoPool.",
+      "type": "success",
+      "timestamp": "À l’instant",
+      "read": false
+    },
+    {
       "id": "notif-01",
       "title": "Campagne presque financée (85%)",
       "message": "La campagne Flacon Cosmétique PCR 250ml a atteint 42 500 unités. Il ne manque que 7 500 unités pour atteindre la MOQ de 50 000 !",
@@ -1848,5 +2238,5 @@
       "read": false
     }
   ],
-  "lastUpdated": "2026-10-08T15:10:45.218Z"
+  "lastUpdated": "2026-10-09T16:52:00.994Z"
 }

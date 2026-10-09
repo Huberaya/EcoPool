@@ -39,6 +39,7 @@ export const AdminDashboard: React.FC = () => {
   const [selectedDocOrder, setSelectedDocOrder] = useState<OrderReservation | null>(null);
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [isValidationModalOpen, setIsValidationModalOpen] = useState(false);
+  const [isConcurrencyModalOpen, setIsConcurrencyModalOpen] = useState(false);
 
   // Compute live KPIs
   const totalVolumeAggregated = campaigns.reduce((sum, c) => sum + c.reservedVolume, 0);
@@ -91,8 +92,17 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Global GMV Summary & Option C Action */}
-        <div className="flex flex-col sm:flex-row items-center gap-4">
+        {/* Global GMV Summary & Option C / Phase 1 Actions */}
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <button
+            onClick={() => setIsConcurrencyModalOpen(true)}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/70 text-emerald-200 font-bold text-xs flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all hover:scale-105"
+            title="Banc d'Essai Concurrence, Atomicité & Server-Sent Events (Défi 1 - Phase 1)"
+          >
+            <Zap className="w-4 h-4 text-emerald-400" />
+            <span>Concurrence & SSE (Phase 1)</span>
+          </button>
+
           <button
             onClick={() => setIsValidationModalOpen(true)}
             className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/70 text-indigo-200 font-bold text-xs flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all hover:scale-105"
@@ -635,6 +645,12 @@ export const AdminDashboard: React.FC = () => {
       <ScenarioValidationModal
         isOpen={isValidationModalOpen}
         onClose={() => setIsValidationModalOpen(false)}
+      />
+
+      {/* Phase 1: Concurrency, Atomicity & Real-Time SSE Workbench */}
+      <ConcurrencyWorkbenchModal
+        isOpen={isConcurrencyModalOpen}
+        onClose={() => setIsConcurrencyModalOpen(false)}
       />
 
     </div>

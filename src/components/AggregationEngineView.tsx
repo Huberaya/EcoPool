@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEcoPool } from '../context/EcoPoolContext';
 import { GroupingDemand, ICPSector } from '../types';
+import { ConcurrencyWorkbenchModal } from './ConcurrencyWorkbenchModal';
 import { 
   Layers, 
   Sparkles, 
@@ -26,6 +27,7 @@ export const AggregationEngineView: React.FC = () => {
   } = useEcoPool();
 
   const [showDemandForm, setShowDemandForm] = useState(false);
+  const [isConcurrencyModalOpen, setIsConcurrencyModalOpen] = useState(false);
   const [format, setFormat] = useState('Flacon 250 ml (col 24/410)');
   const [material, setMaterial] = useState('HDPE 100% Recyclé PCR');
   const [desiredQuantity, setDesiredQuantity] = useState(10000);
@@ -81,6 +83,15 @@ export const AggregationEngineView: React.FC = () => {
             >
               <PlusCircle className="w-4 h-4" />
               Déposer un Besoin d'Achat à Agréger
+            </button>
+
+            <button
+              onClick={() => setIsConcurrencyModalOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/80 text-emerald-300 font-bold text-xs transition-all shadow-lg flex items-center gap-2 cursor-pointer"
+              title="Banc d'Essai Concurrence, Atomicité & Server-Sent Events (Défi 1 - Phase 1)"
+            >
+              <Zap className="w-4 h-4 text-emerald-400" />
+              <span>Banc d'Essai Concurrence & SSE (Phase 1)</span>
             </button>
           </div>
         </div>
@@ -424,6 +435,12 @@ export const AggregationEngineView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Phase 1: Concurrency, Atomicity & Real-Time SSE Workbench */}
+      <ConcurrencyWorkbenchModal
+        isOpen={isConcurrencyModalOpen}
+        onClose={() => setIsConcurrencyModalOpen(false)}
+      />
 
     </div>
   );
